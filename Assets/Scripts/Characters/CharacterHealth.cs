@@ -1,18 +1,30 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterHealth : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private float _initialHealh;
+
+    private float _currentHealh;
+
+    public void ModifyHealth(float amount)
     {
-        
+        _currentHealh -= amount;
+        if(_currentHealh <= 0)
+        {
+            ProcessCharacterDead();
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        
+        _currentHealh = _initialHealh;
+    }
+
+    private void ProcessCharacterDead()
+    {
+        throw new NotImplementedException();
     }
 }
