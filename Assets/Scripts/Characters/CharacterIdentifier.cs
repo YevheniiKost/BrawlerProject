@@ -5,6 +5,12 @@ using UnityEngine;
 public class CharacterIdentifier : MonoBehaviour
 {
     public int Team = 0;
+    public CharacterName Name;
   
+}
+
+public enum CharacterName
+{
+
 }
 

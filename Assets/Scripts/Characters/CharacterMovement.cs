@@ -14,6 +14,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private Transform _targetSphere;
 
     public bool IsControlledByThePlayer;
+    public float NormilizedSpeed;
 
     private float _currentMovementSpeed;
 
@@ -23,20 +24,21 @@ public class CharacterMovement : MonoBehaviour
 
     public void ModifyMovementSpeed(float percent)
     {
-        var newSpeed = _initialMovementSpeed - percent * _initialMovementSpeed / 100;
-        _navMeshAgent.speed = newSpeed;
+        _currentMovementSpeed = _initialMovementSpeed - percent * _initialMovementSpeed / 100;
+        _navMeshAgent.speed = _currentMovementSpeed;
+        RecalculateNormalizedSpeed();
     }
 
     public void ReturnNormalSpeed()
     {
         _navMeshAgent.speed = _initialMovementSpeed;
+        _currentMovementSpeed = _initialMovementSpeed;
+        RecalculateNormalizedSpeed();
     }
 
     private void Awake()
     {
-        _navMeshAgent = GetComponent<NavMeshAgent>();
-        if (IsControlledByThePlayer)
-            _input = GetComponent<CharacterPlayerInput>();
+        SetDependencies();
 
         if (IsControlledByThePlayer)
             _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
@@ -44,9 +46,11 @@ public class CharacterMovement : MonoBehaviour
             _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
     }
 
+   
     private void Start()
     {
         _navMeshAgent.speed = _initialMovementSpeed;
+        RecalculateNormalizedSpeed();
     }
 
     private void Update()
@@ -56,6 +60,14 @@ public class CharacterMovement : MonoBehaviour
         else
             ProcessAIMovemet();
 
+        
+    }
+
+    private void SetDependencies()
+    {
+        _navMeshAgent = GetComponent<NavMeshAgent>();
+        if (IsControlledByThePlayer)
+            _input = GetComponent<CharacterPlayerInput>();
     }
 
     private void ProcessPlayerMovement()
@@ -78,10 +90,14 @@ public class CharacterMovement : MonoBehaviour
         }
     }
 
-
     private void ProcessAIMovemet()
     {
 
+    }
+
+    private void RecalculateNormalizedSpeed()
+    {
+        NormilizedSpeed = _currentMovementSpeed / _initialMovementSpeed;
     }
 }
 
