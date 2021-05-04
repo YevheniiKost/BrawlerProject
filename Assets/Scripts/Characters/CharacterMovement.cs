@@ -59,8 +59,6 @@ public class CharacterMovement : MonoBehaviour
             ProcessPlayerMovement();
         else
             ProcessAIMovemet();
-
-        
     }
 
     private void SetDependencies()
@@ -75,9 +73,11 @@ public class CharacterMovement : MonoBehaviour
         if (_input.VerticalInput != 0 || _input.HorizontalInput != 0)
         {
             _navMeshAgent.isStopped = false;
+
             _movemetDirection = new Vector3(_input.HorizontalInput, 0, _input.VerticalInput);
             var newSpherePosition = transform.position + _movemetDirection.normalized;
             _targetSphere.position = new Vector3(newSpherePosition.x, 0, newSpherePosition.z);
+
             if (!_targetSphere.GetComponent<TargetSphere>().IsInObstacle)
                 _navMeshAgent.destination = _targetSphere.position;
         }
@@ -88,6 +88,9 @@ public class CharacterMovement : MonoBehaviour
             _navMeshAgent.isStopped = true;
             _targetSphere.position = new Vector3(transform.position.x, 0, transform.position.z);
         }
+
+        _currentMovementSpeed = _navMeshAgent.speed;
+        RecalculateNormalizedSpeed();
     }
 
     private void ProcessAIMovemet()

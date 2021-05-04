@@ -11,15 +11,21 @@ public class CharacterAnimation : MonoBehaviour
     private CharacterMovement _movement;
     private NavMeshAgent _navMeshAgent;
 
+    private int _characterLocomotionParamID;
+
     private void Awake()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _movement = GetComponent<CharacterMovement>();
 
+        _characterLocomotionParamID = Animator.StringToHash("MovementSpeed");
     }
 
     private void Update()
     {
-        Debug.Log(_navMeshAgent.isStopped);
+        if (!_navMeshAgent.isStopped)
+            _animator.SetFloat(_characterLocomotionParamID, _movement.NormilizedSpeed);
+        else
+            _animator.SetFloat(_characterLocomotionParamID, 0);
     }
 }
