@@ -1,15 +1,15 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class AISharedContent : MonoBehaviour
+public class AISharedContent
 {
     public readonly CharacterIdentifier Identifier;
     public readonly CharacterCombat Combat;
     public readonly CharacterMovement Movement;
     public readonly CharacterHealth Health;
-    public readonly AIMapHelper MapHelper;
+    public readonly MapHelper MapHelper;
 
-    public AISharedContent(CharacterIdentifier identifier, CharacterCombat combat, CharacterMovement movement, CharacterHealth health, AIMapHelper mapHelper)
+    public AISharedContent(CharacterIdentifier identifier, CharacterCombat combat, CharacterMovement movement, CharacterHealth health, MapHelper mapHelper)
     {
         Identifier = identifier;
         Combat = combat;

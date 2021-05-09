@@ -12,6 +12,7 @@ public class CharacterAnimation : MonoBehaviour
     private NavMeshAgent _navMeshAgent;
 
     private int _characterLocomotionParamID;
+    private int _characterAutoattackParamID;
 
     private void Awake()
     {
@@ -19,6 +20,9 @@ public class CharacterAnimation : MonoBehaviour
         _movement = GetComponent<CharacterMovement>();
 
         _characterLocomotionParamID = Animator.StringToHash("MovementSpeed");
+        _characterAutoattackParamID = Animator.StringToHash("Autoattack");
+
+        GetComponent<CharacterCombat>().AutoAttackWasUsed += UseAutoattack;
     }
 
     private void Update()
@@ -27,5 +31,10 @@ public class CharacterAnimation : MonoBehaviour
             _animator.SetFloat(_characterLocomotionParamID, _movement.NormilizedSpeed);
         else
             _animator.SetFloat(_characterLocomotionParamID, 0);
+    }
+
+    private void UseAutoattack()
+    {
+        _animator.SetTrigger(_characterAutoattackParamID);
     }
 }

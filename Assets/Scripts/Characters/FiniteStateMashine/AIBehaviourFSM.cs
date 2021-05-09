@@ -10,16 +10,21 @@ public class AIBehaviourFSM : MonoBehaviour
    [SerializeField] private CharacterCombat _combat;
    [SerializeField] private CharacterMovement _movement;
    [SerializeField] private CharacterHealth _health;
-   [SerializeField] private AIMapHelper _mapHelper;
 
+    private MapHelper _mapHelper;
     private FiniteStateMachine<AISharedContent> _finiteStateMachine;
     private Dictionary<Type, BaseState<AISharedContent>> _allAIStates = new Dictionary<Type, BaseState<AISharedContent>>();
     private AISharedContent _aiSharedContent;
 
     private void Start()
     {
-        CreateSharedContent();
-        InitFSM();
+        if (!_identifier.IsControlledByThePlayer)
+        {
+            _mapHelper = ServiceLocator.Resolve<MapHelper>();
+            CreateSharedContent();
+            InitFSM();
+        }
+        
     }
     private void Update()
     {
@@ -28,7 +33,14 @@ public class AIBehaviourFSM : MonoBehaviour
 
     private void InitFSM()
     {
-        throw new NotImplementedException();
+        _finiteStateMachine = new FiniteStateMachine<AISharedContent>();
+        _allAIStates[typeof(AttackEnemyState)] = new AttackEnemyState(_aiSharedContent);
+        _allAIStates[typeof(CrystalSearchState)] = new CrystalSearchState(_aiSharedContent);
+        _allAIStates[typeof(EnemySearchState)] = new EnemySearchState(_aiSharedContent);
+        _allAIStates[typeof(IdleState)] = new IdleState(_aiSharedContent);
+        _allAIStates[typeof(TacticalRetreatState)] = new TacticalRetreatState(_aiSharedContent);
+        _finiteStateMachine.InitStates(_allAIStates);
+        _finiteStateMachine.Switch(typeof(IdleState));
     }
 
     private void CreateSharedContent()

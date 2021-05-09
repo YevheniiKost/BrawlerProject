@@ -1,39 +1,92 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
+using System.Collections;
 
+public delegate void CombatEvent();
+
+[RequireComponent(typeof(CharacterIdentifier))]
 public abstract class CharacterCombat : MonoBehaviour
 {
+    public event CombatEvent AutoAttackWasUsed;
+    public event CombatEvent FirstSkillWasUsed;
+    public event CombatEvent SecondSkillWasUsed;
+
+    [HideInInspector]
+    public const float DetectEnemyUpdateTime = 0.2f; 
+
+    [SerializeField] protected AnimationEventHandler _animEventHandler;
+    [SerializeField] protected CharacterIdentifier _charID;
+
     [Header("Autoattacks")]
     [SerializeField] protected float _autoAttackDamage;
     [SerializeField] protected float _autoAttackRange;
     [SerializeField] protected float _autoAttackRate;
 
-    public abstract void AutoAttack(Transform target);
+    public float EnemyDetectRadius = 10f;
+    public float AutoattackRange => _autoAttackRange;
+    public bool IsEnemyDetected;
+    public Transform Target => _target;
+
+    protected float _timeToNextAttack = 0;
+    protected Transform _target;
+    private MapHelper _mapHelper;
+
+    public abstract void AutoAttack();
     public abstract void UseFirstSkill();
     public abstract void UseSecondSkill();
+    public virtual void OnAutoAttack() => AutoAttackWasUsed?.Invoke();
+    public virtual void OnFirsSkillUse() => FirstSkillWasUsed?.Invoke();
+    public virtual void OnSecondSkillUse() => SecondSkillWasUsed?.Invoke();
 
-    protected List<CharacterIdentifier> _enemyList = new List<CharacterIdentifier>();
-    protected CharacterIdentifier _nearestTarget;
-
-    public void GetTarget()
+    private void Awake()
     {
-        _nearestTarget = _enemyList.OrderBy(t => Vector3.Distance(transform.position, t.transform.position)).FirstOrDefault();
+        _animEventHandler.OnAutoattackHit += AutoAttackHit;
     }
+
+    protected abstract void AutoAttackHit();
 
     private void Start()
     {
-        GetEnemies();
+        _mapHelper = ServiceLocator.Resolve<MapHelper>();
+        StartCoroutine(StartEnemySearchCycle());
     }
 
-    protected void GetEnemies()
+    private void Update()
     {
-        foreach (var character in FindObjectsOfType<CharacterIdentifier>())
+        
+    }
+
+    protected IEnumerator StartEnemySearchCycle()
+    {
+        while (true)
         {
-            if (character.Team != GetComponent<CharacterIdentifier>().Team)
+            yield return new WaitForSeconds(DetectEnemyUpdateTime);
+            DetectEnemy();
+        }
+    }
+
+    private void DetectEnemy()
+    {
+        if (_mapHelper.DistanceToNearestEnemy(_charID) <= EnemyDetectRadius)
+        {
+            IsEnemyDetected = true;
+
+            if (Target == _mapHelper.GetNearestEnemy(_charID).transform)
             {
-                _enemyList.Add(character);
+                return;
             }
+            else
+            {
+                _target = _mapHelper.GetNearestEnemy(_charID).transform;
+            }
+
+        }
+        else
+        {
+            IsEnemyDetected = false;
+            _target = null;
         }
     }
 }

@@ -1,18 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using AILogic;
 
-public class TacticalRetreatState : MonoBehaviour
+public class TacticalRetreatState : BaseState<AISharedContent>
 {
-    // Start is called before the first frame update
-    void Start()
+    public TacticalRetreatState(AISharedContent sharedContent) : base(sharedContent)
     {
-        
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Execute()
     {
-        
+
     }
 }

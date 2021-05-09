@@ -1,18 +1,17 @@
-﻿using System.Collections;
+﻿using AILogic;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemySearchState : MonoBehaviour
+public class EnemySearchState : BaseState<AISharedContent>
 {
-    // Start is called before the first frame update
-    void Start()
+    public EnemySearchState(AISharedContent sharedContent) : base(sharedContent)
     {
-        
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Execute()
     {
-        
+        _stateSwitcher.Switch(typeof(IdleState));
     }
+
 }

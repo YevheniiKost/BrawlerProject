@@ -5,17 +5,40 @@ using UnityEngine;
 
 public class CharacterHealth : MonoBehaviour
 {
+    public event Action<float> OnHealthPctChange = delegate { };
+
     [SerializeField] private float _initialHealh;
 
+    public float PercentOfHealthToStartRetreat = 30f;
+    public bool IsCharacterDead => _isCharacteDead;
+
+    private bool _isCharacteDead;
     private float _currentHealh;
+    
 
     public void ModifyHealth(float amount)
     {
-        _currentHealh -= amount;
-        if(_currentHealh <= 0)
+        if (!_isCharacteDead)
         {
-            ProcessCharacterDead();
+            _currentHealh -= amount;
+
+            float currentHealthPct = (float)_currentHealh / (float)_initialHealh;
+            OnHealthPctChange(currentHealthPct);
+
+            if (_currentHealh <= 0)
+            {
+                ProcessCharacterDead();
+            }
         }
+        else
+        {
+            return;
+        }
+    }
+
+    public float PercentOfHealth()
+    {
+        return _currentHealh / _initialHealh * 100;
     }
 
     private void Awake()
@@ -25,6 +48,6 @@ public class CharacterHealth : MonoBehaviour
 
     private void ProcessCharacterDead()
     {
-        throw new NotImplementedException();
+        return;
     }
 }

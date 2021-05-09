@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent (typeof(NavMeshAgent)), RequireComponent (typeof(CharacterPlayerInput))]
+[RequireComponent (typeof(NavMeshAgent)), RequireComponent (typeof(CharacterPlayerInput)), RequireComponent (typeof(CharacterIdentifier))]
 public class CharacterMovement : MonoBehaviour
 {
     [Header("Movenet stats")]
@@ -13,14 +13,16 @@ public class CharacterMovement : MonoBehaviour
     [Header("Development")]
     [SerializeField] private Transform _targetSphere;
 
-    public bool IsControlledByThePlayer;
+    
     public float NormilizedSpeed;
+    public bool IsCharacterMoving => _isMoving;
 
     private float _currentMovementSpeed;
 
+    private bool _isMoving;
     private NavMeshAgent _navMeshAgent;
     private CharacterPlayerInput _input;
-    private Vector3 _movemetDirection = Vector3.zero;
+    private CharacterIdentifier _iD;
 
     public void ModifyMovementSpeed(float percent)
     {
@@ -36,16 +38,28 @@ public class CharacterMovement : MonoBehaviour
         RecalculateNormalizedSpeed();
     }
 
+    public void SetTarget(Transform target)
+    {
+        _navMeshAgent.isStopped = false;
+        _navMeshAgent.destination = target.position;
+
+        _currentMovementSpeed = _navMeshAgent.speed;
+        RecalculateNormalizedSpeed();
+    }
+
+    public void StopMovement()
+    {
+        _navMeshAgent.destination = transform.position;
+        _navMeshAgent.isStopped = true;
+
+        _currentMovementSpeed = _navMeshAgent.speed;
+        RecalculateNormalizedSpeed();
+    }
+
     private void Awake()
     {
         SetDependencies();
-
-        if (IsControlledByThePlayer)
-            _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
-        else
-            _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
     }
-
    
     private void Start()
     {
@@ -55,27 +69,29 @@ public class CharacterMovement : MonoBehaviour
 
     private void Update()
     {
-        if (IsControlledByThePlayer)
+        if (_iD.IsControlledByThePlayer)
             ProcessPlayerMovement();
         else
             ProcessAIMovemet();
+
+        _isMoving = !_navMeshAgent.isStopped; 
     }
 
     private void SetDependencies()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
-        if (IsControlledByThePlayer)
+        _iD = GetComponent<CharacterIdentifier>();
+        if (_iD.IsControlledByThePlayer)
             _input = GetComponent<CharacterPlayerInput>();
     }
 
     private void ProcessPlayerMovement()
     {
-        if (_input.VerticalInput != 0 || _input.HorizontalInput != 0)
+        if (_input.MovementDirection != Vector3.zero)
         {
             _navMeshAgent.isStopped = false;
 
-            _movemetDirection = new Vector3(_input.HorizontalInput, 0, _input.VerticalInput);
-            var newSpherePosition = transform.position + _movemetDirection.normalized;
+            var newSpherePosition = transform.position + _input.MovementDirection;
             _targetSphere.position = new Vector3(newSpherePosition.x, 0, newSpherePosition.z);
 
             if (!_targetSphere.GetComponent<TargetSphere>().IsInObstacle)
@@ -84,7 +100,6 @@ public class CharacterMovement : MonoBehaviour
         else
         {
             _navMeshAgent.destination = transform.position;
-            _movemetDirection = Vector3.zero;
             _navMeshAgent.isStopped = true;
             _targetSphere.position = new Vector3(transform.position.x, 0, transform.position.z);
         }

@@ -5,15 +5,30 @@ using UnityEngine;
 
 public class CharacterPlayerInput : MonoBehaviour
 {
-    public float HorizontalInput => _horizontalInput;
-    public float VerticalInput => _verticalInput;
+    public bool ControlledByKeyboard;
+    public Vector3 MovementDirection => _movementDirection;
 
     private float _horizontalInput;
     private float _verticalInput;
+    private Vector3 _movementDirection;
+
+    private PlayerInputManager _inputManager;
+
+    private void Start()
+    {
+        _inputManager = ServiceLocator.Resolve<PlayerInputManager>();
+    }
 
     void Update()
     {
-        TemoraryKeyboardInput();
+        if (ControlledByKeyboard)
+            TemoraryKeyboardInput();
+        else
+        {
+            _movementDirection.x = _inputManager.MovenemtInputDirection.x;
+            _movementDirection.z = _inputManager.MovenemtInputDirection.y;
+        }
+        
     }
 
     private void TemoraryKeyboardInput()
@@ -22,6 +37,7 @@ public class CharacterPlayerInput : MonoBehaviour
 
         _horizontalInput = Input.GetAxis("Horizontal");
         _verticalInput = Input.GetAxis("Vertical");
+        _movementDirection = new Vector3(_horizontalInput, 0, _verticalInput).normalized;
     }
 
     private void ClearInput()
