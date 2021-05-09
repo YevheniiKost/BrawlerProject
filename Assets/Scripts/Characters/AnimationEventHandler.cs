@@ -5,11 +5,16 @@ using UnityEngine;
 
 public class AnimationEventHandler : MonoBehaviour
 {
-    public event Action OnAutoattackHit; 
+    public event Action OnAutoattackHit;
+    public event Action OnFirstSkillHit;
 
     public void AutoattackHit()
     {
         OnAutoattackHit?.Invoke();
-        Debug.Log("Hit");
+    }
+
+    public void FistSkillHit()
+    {
+        OnFirstSkillHit?.Invoke();
     }
 }

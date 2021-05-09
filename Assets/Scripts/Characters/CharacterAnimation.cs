@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -13,6 +14,7 @@ public class CharacterAnimation : MonoBehaviour
 
     private int _characterLocomotionParamID;
     private int _characterAutoattackParamID;
+    private int _characterFirstSkillParamID;
 
     private void Awake()
     {
@@ -21,8 +23,11 @@ public class CharacterAnimation : MonoBehaviour
 
         _characterLocomotionParamID = Animator.StringToHash("MovementSpeed");
         _characterAutoattackParamID = Animator.StringToHash("Autoattack");
+        _characterFirstSkillParamID = Animator.StringToHash("FirstSkill");
 
         GetComponent<CharacterCombat>().AutoAttackWasUsed += UseAutoattack;
+        GetComponent<CharacterCombat>().FirstSkillWasUsed += UseFirstSkill;
+
     }
 
     private void Update()
@@ -36,5 +41,10 @@ public class CharacterAnimation : MonoBehaviour
     private void UseAutoattack()
     {
         _animator.SetTrigger(_characterAutoattackParamID);
+    }
+
+    private void UseFirstSkill()
+    {
+        _animator.SetTrigger(_characterFirstSkillParamID);
     }
 }

@@ -43,9 +43,11 @@ public abstract class CharacterCombat : MonoBehaviour
     private void Awake()
     {
         _animEventHandler.OnAutoattackHit += AutoAttackHit;
+        _animEventHandler.OnFirstSkillHit += FirstSkillHit;
     }
 
     protected abstract void AutoAttackHit();
+    protected abstract void FirstSkillHit();
 
     private void Start()
     {
