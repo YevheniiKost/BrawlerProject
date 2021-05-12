@@ -36,7 +36,26 @@ public class MapHelper : MonoBehaviour
             Debug.LogError($"Character {me.name} identifier error");
             return null;
         }
-    } 
+    }
+
+    public CharacterIdentifier GetNearestFriends(CharacterIdentifier me)
+    {
+        if (me.Team == 1)
+        {
+            var nearest = BlueTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position)).ToList();
+            return nearest[1];
+        }
+        else if (me.Team == 0)
+        {
+            var nearest = RedTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position)).ToList();
+            return nearest[1];
+        }
+        else
+        {
+            Debug.LogError($"Character {me.name} identifier error");
+            return null;
+        }
+    }
 
     public float DistanceToNearestEnemy(CharacterIdentifier me)
     {

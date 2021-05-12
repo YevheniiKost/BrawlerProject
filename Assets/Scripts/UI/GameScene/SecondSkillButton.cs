@@ -5,14 +5,19 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
 
-public class SecondSkillButton : SkillButton, IPointerUpHandler
+public class SecondSkillButton : SkillButton, IPointerUpHandler, IPointerDownHandler
 {
     public void OnPointerUp(PointerEventData eventData)
     {
-        EventAggregator.Post(this, new FirstSkillEvent() { Direction = _direction });
-        Debug.Log($"skill 2 used with {_direction} angle");
+        EventAggregator.Post(this, new SecondSkillEvent() { Direction = _direction });
+        _inputManager.IsPlayerHoldingSecondSkillButton = false;
         _direction = Vector3.zero;
 
         SetBackgroundAndThumbleVisibility(false);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        _inputManager.IsPlayerHoldingSecondSkillButton = true;
     }
 }

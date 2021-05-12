@@ -15,6 +15,7 @@ public class CharacterAnimation : MonoBehaviour
     private int _characterLocomotionParamID;
     private int _characterAutoattackParamID;
     private int _characterFirstSkillParamID;
+    private int _characterSecondSkillParamID;
 
     private void Awake()
     {
@@ -24,9 +25,11 @@ public class CharacterAnimation : MonoBehaviour
         _characterLocomotionParamID = Animator.StringToHash("MovementSpeed");
         _characterAutoattackParamID = Animator.StringToHash("Autoattack");
         _characterFirstSkillParamID = Animator.StringToHash("FirstSkill");
+        _characterSecondSkillParamID = Animator.StringToHash("SecondSkill");
 
         GetComponent<CharacterCombat>().AutoAttackWasUsed += UseAutoattack;
         GetComponent<CharacterCombat>().FirstSkillWasUsed += UseFirstSkill;
+        GetComponent<CharacterCombat>().SecondSkillWasUsed += UseSecondSkill;
 
     }
 
@@ -46,5 +49,10 @@ public class CharacterAnimation : MonoBehaviour
     private void UseFirstSkill()
     {
         _animator.SetTrigger(_characterFirstSkillParamID);
+    }
+
+    private void UseSecondSkill()
+    {
+        _animator.SetTrigger(_characterSecondSkillParamID);
     }
 }

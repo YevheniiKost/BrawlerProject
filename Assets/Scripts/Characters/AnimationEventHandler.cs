@@ -7,6 +7,7 @@ public class AnimationEventHandler : MonoBehaviour
 {
     public event Action OnAutoattackHit;
     public event Action OnFirstSkillHit;
+    public event Action OnSecondSkillHit;
 
     public void AutoattackHit()
     {
@@ -16,5 +17,10 @@ public class AnimationEventHandler : MonoBehaviour
     public void FistSkillHit()
     {
         OnFirstSkillHit?.Invoke();
+    }
+
+    public void SecondSkillHit()
+    {
+        OnSecondSkillHit?.Invoke();
     }
 }

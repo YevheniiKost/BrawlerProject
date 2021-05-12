@@ -17,6 +17,8 @@ public class SkillButton : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
     protected Vector3 _newPosition;
     protected float _backgroundRadius;
 
+    protected PlayerInputManager _inputManager;
+
     public void OnBeginDrag(PointerEventData eventData)
     {
         _startThumblePosition = _thumble.transform.position;
@@ -41,6 +43,9 @@ public class SkillButton : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
         }
 
         _thumble.transform.position = _newPosition;
+
+        _inputManager.FirstSkillDirection = _direction;
+        _inputManager.SecondSkillDirection = _direction;
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -51,6 +56,7 @@ public class SkillButton : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
     private void Start()
     {
         CalculateRadius();
+        _inputManager = ServiceLocator.Resolve<PlayerInputManager>();
     }
 
     protected void CalculateRadius()

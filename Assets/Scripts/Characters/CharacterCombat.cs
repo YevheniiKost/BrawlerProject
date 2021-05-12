@@ -20,7 +20,7 @@ public abstract class CharacterCombat : MonoBehaviour
     [SerializeField] protected CharacterIdentifier _charID;
 
     [Header("Autoattacks")]
-    [SerializeField] protected float _autoAttackDamage;
+    [SerializeField] protected int _autoAttackDamage;
     [SerializeField] protected float _autoAttackRange;
     [SerializeField] protected float _autoAttackRate;
 
@@ -31,7 +31,10 @@ public abstract class CharacterCombat : MonoBehaviour
 
     protected float _timeToNextAttack = 0;
     protected Transform _target;
+    protected CharacterEffectsManager _effectsManager;
+
     private MapHelper _mapHelper;
+   
 
     public abstract void AutoAttack();
     public abstract void UseFirstSkill();
@@ -40,25 +43,16 @@ public abstract class CharacterCombat : MonoBehaviour
     public virtual void OnFirsSkillUse() => FirstSkillWasUsed?.Invoke();
     public virtual void OnSecondSkillUse() => SecondSkillWasUsed?.Invoke();
 
-    private void Awake()
-    {
-        _animEventHandler.OnAutoattackHit += AutoAttackHit;
-        _animEventHandler.OnFirstSkillHit += FirstSkillHit;
-    }
-
-    protected abstract void AutoAttackHit();
-    protected abstract void FirstSkillHit();
-
+ 
     private void Start()
     {
         _mapHelper = ServiceLocator.Resolve<MapHelper>();
+        _effectsManager = ServiceLocator.Resolve<CharacterEffectsManager>();
+
         StartCoroutine(StartEnemySearchCycle());
     }
 
-    private void Update()
-    {
-        
-    }
+
 
     protected IEnumerator StartEnemySearchCycle()
     {

@@ -12,6 +12,16 @@ public class TacticalRetreatState : BaseState<AISharedContent>
 
     public override void Execute()
     {
-
+        if (_sharedContent.Health.PercentOfHealth() < _sharedContent.Health.PercentOfHealthToStartRetreat)
+        {
+            if (_sharedContent.Identifier.Team == 0)
+                _sharedContent.Movement.SetTarget(_sharedContent.MapHelper.RedCharacterSpawner);
+            else if (_sharedContent.Identifier.Team == 1)
+                _sharedContent.Movement.SetTarget(_sharedContent.MapHelper.BlueCharacterSpawner);
+        }
+        else
+        {
+            _stateSwitcher.Switch(typeof(IdleState));
+        }
     }
 }

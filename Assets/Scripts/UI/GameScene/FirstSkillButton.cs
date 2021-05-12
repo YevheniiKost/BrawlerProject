@@ -5,14 +5,20 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
 
-public class FirstSkillButton : SkillButton, IPointerUpHandler
+public class FirstSkillButton : SkillButton, IPointerUpHandler, IPointerDownHandler
 {
     public void OnPointerUp(PointerEventData eventData)
     {
         EventAggregator.Post(this, new FirstSkillEvent() { Direction = _direction });
-        Debug.Log($"skill 1 used with {_direction} angle");
-        _direction = Vector3.zero;
+        _inputManager.IsPlayerHoldingFirstSkillButton = false;
+        _direction = Vector3.zero; 
 
         SetBackgroundAndThumbleVisibility(false);
     }
+
+
+   public void OnPointerDown(PointerEventData eventData)
+   {
+     _inputManager.IsPlayerHoldingFirstSkillButton = true;
+   }
 }

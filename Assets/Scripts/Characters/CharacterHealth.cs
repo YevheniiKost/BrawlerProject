@@ -20,7 +20,7 @@ public class CharacterHealth : MonoBehaviour
     {
         if (!_isCharacteDead)
         {
-            _currentHealh -= amount;
+            _currentHealh += amount;
 
             float currentHealthPct = (float)_currentHealh / (float)_initialHealh;
             OnHealthPctChange(currentHealthPct);
