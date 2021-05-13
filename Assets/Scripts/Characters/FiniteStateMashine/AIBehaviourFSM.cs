@@ -39,6 +39,7 @@ public class AIBehaviourFSM : MonoBehaviour
         _allAIStates[typeof(EnemySearchState)] = new EnemySearchState(_aiSharedContent);
         _allAIStates[typeof(IdleState)] = new IdleState(_aiSharedContent);
         _allAIStates[typeof(TacticalRetreatState)] = new TacticalRetreatState(_aiSharedContent);
+        _allAIStates[typeof(DeadState)] = new DeadState(_aiSharedContent);
         _finiteStateMachine.InitStates(_allAIStates);
         _finiteStateMachine.Switch(typeof(IdleState));
     }

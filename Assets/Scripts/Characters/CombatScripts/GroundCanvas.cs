@@ -23,9 +23,13 @@ public class GroundCanvas : MonoBehaviour
     {
         if (_inputManager.IsPlayerHoldingFirstSkillButton)
         {
-            _firstSkillPointer.gameObject.SetActive(true);
-            var angle = Mathf.Atan2(_inputManager.FirstSkillDirection.x, _inputManager.FirstSkillDirection.y) * Mathf.Rad2Deg;
-            _firstSkillPointer.transform.rotation = Quaternion.Euler(0, angle,0 );
+            if (_inputManager.FirstSkillDirection != Vector3.zero)
+            {
+                _firstSkillPointer.gameObject.SetActive(true);
+                var angle = Mathf.Atan2(_inputManager.FirstSkillDirection.x, _inputManager.FirstSkillDirection.y) * Mathf.Rad2Deg;
+                _firstSkillPointer.transform.rotation = Quaternion.Euler(0, angle, 0);
+                
+            }
         }
         else
         {
@@ -34,9 +38,13 @@ public class GroundCanvas : MonoBehaviour
 
         if (_inputManager.IsPlayerHoldingSecondSkillButton)
         {
-            _secondSkillPointer.gameObject.SetActive(true);
-            var angle = Mathf.Atan2(_inputManager.SecondSkillDirection.x, _inputManager.SecondSkillDirection.y) * Mathf.Rad2Deg;
-            _secondSkillPointer.transform.rotation = Quaternion.Euler(0, angle, 0);
+            if (_inputManager.SecondSkillDirection != Vector3.zero)
+            {
+                _secondSkillPointer.gameObject.SetActive(true);
+                var angle = Mathf.Atan2(_inputManager.SecondSkillDirection.x, _inputManager.SecondSkillDirection.y) * Mathf.Rad2Deg;
+                _secondSkillPointer.transform.rotation = Quaternion.Euler(0, angle, 0);
+            }
+     
         }
         else
         {

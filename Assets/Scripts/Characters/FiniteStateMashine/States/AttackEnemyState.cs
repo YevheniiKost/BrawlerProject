@@ -7,11 +7,12 @@ public class AttackEnemyState : BaseState<AISharedContent>
 {
     public AttackEnemyState(AISharedContent sharedContent) : base(sharedContent)
     {
+
     }
 
     public override void Execute()
     {
-        if (_sharedContent.Health.PercentOfHealth() > _sharedContent.Health.PercentOfHealthToStartRetreat)
+        if (_sharedContent.Health.GetLifeStatus() == LifeStatus.Alright)
         {
             if (_sharedContent.Combat.Target != null)
             {
@@ -23,7 +24,7 @@ public class AttackEnemyState : BaseState<AISharedContent>
                 {
                     _sharedContent.Movement.StopMovement();
                     if (!_sharedContent.Movement.IsCharacterMoving)
-                        _sharedContent.Combat.AutoAttack();
+                        _sharedContent.Combat.AttackBehavior();
                 }
             }
             else
@@ -31,9 +32,13 @@ public class AttackEnemyState : BaseState<AISharedContent>
                 _stateSwitcher.Switch(typeof(CrystalSearchState));
             }
         }
-        else
+        else if(_sharedContent.Health.GetLifeStatus() == LifeStatus.NeedHealth)
         {
             _stateSwitcher.Switch(typeof(TacticalRetreatState));
+        }
+        else
+        {
+            _stateSwitcher.Switch(typeof(DeadState));
         }
     }
 }

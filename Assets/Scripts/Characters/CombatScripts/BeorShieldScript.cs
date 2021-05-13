@@ -9,18 +9,22 @@ public class BeorShieldScript : MonoBehaviour
     private int _damage;
     private float _speed;
     private float _distance;
+    private float _stunDuration;
     private Vector3 _direction;
+    private CharacterIdentifier _thrower;
 
     private float _lifeTime;
     private int _contactsCount;
 
-    public void GetData(int friendlyTeam, int damage, float speed, float distance, Vector3 direction)
+    public void GetData(int damage, float speed, float distance, Vector3 direction, CharacterIdentifier thrower, float duration)
     {
-        _friendlyTeam = friendlyTeam;
+        _friendlyTeam = thrower.Team;
         _damage = damage;
         _speed = speed;
         _distance = distance;
         _direction = direction;
+        _thrower = thrower;
+        _stunDuration = duration;
 
         _lifeTime = _distance / _speed;
     }
@@ -31,20 +35,30 @@ public class BeorShieldScript : MonoBehaviour
         {
             if (character.Team != _friendlyTeam)
             {
-                character.GetComponent<CharacterHealth>()?.ModifyHealth(-_damage);
+                character.GetComponent<CharacterHealth>()?.ModifyHealth(-_damage, _thrower);
+
+                ServiceLocator.Resolve<CharacterEffectsManager>()?.StunEffect(character, _stunDuration);
+
                 _contactsCount++;
+
                 if(_contactsCount >= 2)
                 {
                     Destroy(this.gameObject);
                 }
-                //todo add stun effect
+                
                 var nextTarget = ServiceLocator.Resolve<MapHelper>()?.GetNearestFriends(character);
-
-                if(Vector3.Distance(nextTarget.transform.position, transform.position) < _distance)
+                if (nextTarget != null)
                 {
-                    _lifeTime *= 2;
-                    var newDir = (nextTarget.transform.position - transform.position).normalized;
-                    _direction = new Vector3(newDir.x, _direction.y, newDir.z);   
+                    if (Vector3.Distance(nextTarget.transform.position, transform.position) < _distance)
+                    {
+                        _lifeTime += (_distance / _speed);
+                        var newDir = (nextTarget.transform.position - transform.position).normalized;
+                        _direction = new Vector3(newDir.x, _direction.y, newDir.z);
+                    }
+                }
+                else
+                {
+                    Destroy(this.gameObject);
                 }
             } 
         }

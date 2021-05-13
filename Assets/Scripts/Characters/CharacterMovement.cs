@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent (typeof(NavMeshAgent)), RequireComponent (typeof(CharacterPlayerInput)), RequireComponent (typeof(CharacterIdentifier))]
-public class CharacterMovement : MonoBehaviour
+public class CharacterMovement : MonoBehaviour, IStunComponent
 {
     [Header("Movenet stats")]
     [SerializeField] private float _initialMovementSpeed = 10f;
@@ -13,7 +13,7 @@ public class CharacterMovement : MonoBehaviour
     [Header("Development")]
     [SerializeField] private Transform _targetSphere;
 
-    
+    public bool ForcedStop = false;
     public float NormilizedSpeed;
     public bool IsCharacterMoving => _isMoving;
 
@@ -23,6 +23,16 @@ public class CharacterMovement : MonoBehaviour
     private NavMeshAgent _navMeshAgent;
     private CharacterPlayerInput _input;
     private CharacterIdentifier _iD;
+
+    #region Stun
+    public bool GetIsStunned() => ForcedStop;
+
+    public void SetIsStunned(bool value)
+    {
+        ForcedStop = value;
+        StopMovement();
+    }
+    #endregion
 
     public void ModifyMovementSpeed(float percent)
     {
@@ -38,13 +48,21 @@ public class CharacterMovement : MonoBehaviour
         RecalculateNormalizedSpeed();
     }
 
+    #region AI movement
     public void SetTarget(Transform target)
     {
-        _navMeshAgent.isStopped = false;
-        _navMeshAgent.destination = target.position;
+        if (!ForcedStop)
+        {
+            _navMeshAgent.isStopped = false;
+            _navMeshAgent.destination = target.position;
 
-        _currentMovementSpeed = _navMeshAgent.speed;
-        RecalculateNormalizedSpeed();
+            _currentMovementSpeed = _navMeshAgent.speed;
+            RecalculateNormalizedSpeed();
+        }
+        else
+        {
+            StopMovement();
+        }
     }
 
     public void StopMovement()
@@ -55,6 +73,11 @@ public class CharacterMovement : MonoBehaviour
         _currentMovementSpeed = _navMeshAgent.speed;
         RecalculateNormalizedSpeed();
     }
+    #endregion
+
+    public void ProcessForcedStop() => ForcedStop = true;
+
+    public void UndoForcedStop() => ForcedStop = false;
 
     private void Awake()
     {
@@ -69,7 +92,7 @@ public class CharacterMovement : MonoBehaviour
 
     private void Update()
     {
-        if (_iD.IsControlledByThePlayer)
+        if (_iD.IsControlledByThePlayer && !ForcedStop)
             ProcessPlayerMovement();
         else
             ProcessAIMovemet();
@@ -117,5 +140,7 @@ public class CharacterMovement : MonoBehaviour
     {
         NormilizedSpeed = _currentMovementSpeed / _initialMovementSpeed;
     }
+
+    
 }
 

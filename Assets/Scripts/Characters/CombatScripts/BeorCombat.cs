@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class BeorCombat : CharacterCombat
 {
-    [SerializeField] private float _rotationSpeed = 10f;
-
     [Header("Shield bash")]
     [SerializeField] private int _shieldBashDamage = 10;
     [SerializeField] private float _shieldBashRadius;
@@ -27,13 +25,27 @@ public class BeorCombat : CharacterCombat
     private Vector3 _firstSkillDirection = Vector3.zero;
     private Vector3 _secondSkillDirection = Vector3.zero;
 
-    private float _timeToNextShieldBash = 0;
-    private float _timeToNextShieldThrow = 0;
+
+    public override void AttackBehavior()
+    {
+            if (_secondAbilityCooldownTimer == 0)
+            {
+                UseSecondSkill();
+            }
+            else if (_firstAbilityCooldownTimer == 0)
+            {
+                UseFirstSkill();
+            }
+            else
+            {
+                AutoAttack();
+            }
+    }
 
     #region Use of skills
     public override void AutoAttack()
     {
-        if (_timeToNextAttack >= _autoAttackRate && Target != null)
+        if (_timeToNextAttack >= _autoAttackRate && Target != null && !_isStunned)
         {
             if (Vector3.Distance(transform.position, Target.position) <= _autoAttackRange)
             {
@@ -47,7 +59,7 @@ public class BeorCombat : CharacterCombat
 
     public override void UseFirstSkill()
     {
-        if (_timeToNextShieldBash >= _shieldBashCooldown)
+        if (_firstAbilityCooldownTimer == 0 && !_isStunned)
         {
             if (_firstSkillDirection == Vector3.zero && _target != null)
             {
@@ -59,28 +71,37 @@ public class BeorCombat : CharacterCombat
             }
             OnFirsSkillUse();
             _shieldBashCollider.gameObject.SetActive(true);
-            _timeToNextShieldBash = 0;
+            _firstAbilityCooldownTimer = _shieldBashCooldown;
         }
     }
 
     public override void UseSecondSkill()
     {
-        if(_timeToNextShieldThrow >= _shieldThrowCooldown)
+        if(_secondAbilityCooldownTimer == 0 && !_isStunned)
         {
-            if (_firstSkillDirection == Vector3.zero && _target != null)
+            if (_secondSkillDirection == Vector3.zero)
             {
-                transform.LookAt(_target);
+                if (_target != null)
+                {
+                    var dirToTarget = _target.transform.position - transform.position;
+                    _secondSkillDirection = new Vector3(dirToTarget.x, dirToTarget.z, 0).normalized;
+                    transform.LookAt(_target);
+                }
+                else
+                {
+                    _secondSkillDirection = Vector3.up;
+                }
             }
-            else
-            {
-                transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_secondSkillDirection.x, _secondSkillDirection.y) * Mathf.Rad2Deg, 0);
-            }
-            OnSecondSkillUse();
-            _timeToNextShieldThrow = 0;
+          
+             transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_secondSkillDirection.x, _secondSkillDirection.y) * Mathf.Rad2Deg, 0);
+             OnSecondSkillUse();
+             GetComponent<CharacterMovement>()?.ProcessForcedStop();
+            _secondAbilityCooldownTimer = _shieldThrowCooldown;
         }
     }
 
     #endregion
+
 
     private void Awake()
     {
@@ -93,8 +114,6 @@ public class BeorCombat : CharacterCombat
         EventAggregator.Subscribe<SecondSkillEvent>(SecondSkillInputHandler);
     }
 
-  
-
     private void OnDestroy()
     {
         _animEventHandler.OnAutoattackHit -= AutoAttackHit;
@@ -105,16 +124,32 @@ public class BeorCombat : CharacterCombat
     private void Update()
     {
         _timeToNextAttack += Time.deltaTime;
-        _timeToNextShieldBash += Time.deltaTime;
-        _timeToNextShieldThrow += Time.deltaTime;
+
+        if(_firstAbilityCooldownTimer > 0)
+        {
+            _firstAbilityCooldownTimer -= Time.deltaTime;
+        }
+        else
+        {
+            _firstAbilityCooldownTimer = 0;
+        }
+
+        if(_secondAbilityCooldownTimer > 0)
+        {
+            _secondAbilityCooldownTimer -= Time.deltaTime;
+        }
+        else
+        {
+            _secondAbilityCooldownTimer = 0;
+        }
     }
 
-
+    #region Skills hits
     private void AutoAttackHit()
     {
         if (Target.TryGetComponent(out CharacterHealth enemy))
         {
-            enemy.ModifyHealth(_autoAttackDamage);
+            enemy.ModifyHealth(-_autoAttackDamage, _charID);
             _timeToNextAttack = 0;
         }
     }
@@ -136,7 +171,7 @@ public class BeorCombat : CharacterCombat
             }
             else
             {
-                contact.GetComponent<CharacterHealth>().ModifyHealth(-_shieldBashDamage);
+                contact.GetComponent<CharacterHealth>().ModifyHealth(-_shieldBashDamage, _charID);
                 _effectsManager.SnareEffect(contact, _shieldBashSlowingFactor, _shieldBashSlowingDuaration);
                 Debug.Log($"{contact.gameObject.name} get damageded");
             }
@@ -148,12 +183,17 @@ public class BeorCombat : CharacterCombat
    private void SecondSkillHit()
     {
         var shield = Instantiate(_shieldPrefab, _shieldStartPoint.position + Vector3.down * .5f, Quaternion.identity);
-        shield.GetData(_charID.Team, _shieldThrowDamage, _shieldThrowSpeed, _shieldThrowDistance, new Vector3(_secondSkillDirection.x, 0, _secondSkillDirection.y)); ;
+        shield.GetData(_shieldThrowDamage, _shieldThrowSpeed, _shieldThrowDistance, new Vector3(_secondSkillDirection.x, 0, _secondSkillDirection.y), _charID, _shieldThrowStunDuration);
+        GetComponent<CharacterMovement>()?.UndoForcedStop();
     }
 
+    #endregion
+
+    #region Player input handler
     private void AutoAttackHandler(object arg1, AutoattackEvent arg2)
     {
-        AutoAttack();
+        if (_charID.IsControlledByThePlayer)
+            AutoAttack();
     }
 
     private void FirstSkillInputHandler(object arg1, FirstSkillEvent skill)
@@ -170,8 +210,12 @@ public class BeorCombat : CharacterCombat
         if (_charID.IsControlledByThePlayer)
         {
             _secondSkillDirection = skill.Direction;
+            
+
             UseSecondSkill();
         }
 
     }
+
+    #endregion
 }

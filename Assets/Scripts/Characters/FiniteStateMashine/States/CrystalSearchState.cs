@@ -10,29 +10,40 @@ public class CrystalSearchState : BaseState<AISharedContent>
     }
 
     public override void Execute()
-   {
-        if (!_sharedContent.Combat.IsEnemyDetected)
+    {
+        if (_sharedContent.Health.GetLifeStatus() == LifeStatus.Alright)
         {
-            if (_sharedContent.MapHelper.IsSomeOfEnemiesCrystalsActive(_sharedContent.Identifier))
+            if (!_sharedContent.Combat.IsEnemyDetected)
             {
-                _sharedContent.Movement.SetTarget(_sharedContent.MapHelper.LocateNearestActiveEnemyCrystal(_sharedContent.Identifier));
-            }
-            else if (!_sharedContent.MapHelper.IsSomeOfEnemiesCrystalsActive(_sharedContent.Identifier))
-            {
-                _sharedContent.Movement.SetTarget(_sharedContent.MapHelper.LocateNearestActiveFriendlyCrystal(_sharedContent.Identifier));
-            }
-            else if (_sharedContent.MapHelper.LocateNearestActiveFriendlyCrystal(_sharedContent.Identifier) == null)
-            {
-                _stateSwitcher.Switch(typeof(EnemySearchState));
+                if (_sharedContent.MapHelper.IsSomeOfEnemiesCrystalsActive(_sharedContent.Identifier))
+                {
+                    _sharedContent.Movement.SetTarget(_sharedContent.MapHelper.LocateNearestActiveEnemyCrystal(_sharedContent.Identifier));
+                }
+                else if (!_sharedContent.MapHelper.IsSomeOfEnemiesCrystalsActive(_sharedContent.Identifier))
+                {
+                    _sharedContent.Movement.SetTarget(_sharedContent.MapHelper.LocateNearestActiveFriendlyCrystal(_sharedContent.Identifier));
+                }
+                else if (_sharedContent.MapHelper.LocateNearestActiveFriendlyCrystal(_sharedContent.Identifier) == null)
+                {
+                    _stateSwitcher.Switch(typeof(EnemySearchState));
+                }
+                else
+                {
+                    _stateSwitcher.Switch(typeof(AttackEnemyState));
+                }
             }
             else
             {
                 _stateSwitcher.Switch(typeof(AttackEnemyState));
             }
         }
+        else if (_sharedContent.Health.GetLifeStatus() == LifeStatus.NeedHealth)
+        {
+            _stateSwitcher.Switch(typeof(TacticalRetreatState));
+        }
         else
         {
-            _stateSwitcher.Switch(typeof(AttackEnemyState));
+            _stateSwitcher.Switch(typeof(DeadState));
         }
     }
 }

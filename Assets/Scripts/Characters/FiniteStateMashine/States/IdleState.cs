@@ -12,7 +12,7 @@ public class IdleState : BaseState<AISharedContent>
 
     public override void Execute()
     {
-        if (_sharedContent.Health.PercentOfHealth() > _sharedContent.Health.PercentOfHealthToStartRetreat)
+        if (_sharedContent.Health.GetLifeStatus() == LifeStatus.Alright)
         {
             if (_sharedContent.Combat.IsEnemyDetected)
             {
@@ -21,14 +21,19 @@ public class IdleState : BaseState<AISharedContent>
             else if (!_sharedContent.Combat.IsEnemyDetected && _sharedContent.MapHelper.IsSomeOfEnemiesCrystalsActive(_sharedContent.Identifier))
             {
                 _stateSwitcher.Switch(typeof(CrystalSearchState));
-            } else if(!_sharedContent.Combat.IsEnemyDetected && !_sharedContent.MapHelper.IsSomeOfEnemiesCrystalsActive(_sharedContent.Identifier))
+            }
+            else if (!_sharedContent.Combat.IsEnemyDetected && !_sharedContent.MapHelper.IsSomeOfEnemiesCrystalsActive(_sharedContent.Identifier))
             {
                 _stateSwitcher.Switch(typeof(EnemySearchState));
             }
         }
-        else
+        else if (_sharedContent.Health.GetLifeStatus() == LifeStatus.NeedHealth)
         {
             _stateSwitcher.Switch(typeof(TacticalRetreatState));
+        }
+        else
+        {
+            _stateSwitcher.Switch(typeof(DeadState));
         }
     }
 }

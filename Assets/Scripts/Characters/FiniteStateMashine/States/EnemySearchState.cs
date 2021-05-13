@@ -11,7 +11,33 @@ public class EnemySearchState : BaseState<AISharedContent>
 
     public override void Execute()
     {
-        _stateSwitcher.Switch(typeof(IdleState));
+        if (_sharedContent.Health.GetLifeStatus() == LifeStatus.Alright)
+        {
+            if (!_sharedContent.MapHelper.IsAllEnemiesDead(_sharedContent.Identifier))
+            {
+                if (_sharedContent.MapHelper.DistanceToNearestEnemy(_sharedContent.Identifier) > _sharedContent.Combat.EnemyDetectRadius)
+                {
+                    _sharedContent.Movement.SetTarget(_sharedContent.MapHelper.GetNearestEnemy(_sharedContent.Identifier).transform);
+                }
+                else
+                {
+                    _stateSwitcher.Switch(typeof(AttackEnemyState));
+                }
+            }
+            else
+            {
+                _stateSwitcher.Switch(typeof(IdleState));
+            }
+
+        }
+        else if (_sharedContent.Health.GetLifeStatus() == LifeStatus.NeedHealth)
+        {
+            _stateSwitcher.Switch(typeof(TacticalRetreatState));
+        }
+        else
+        {
+            _stateSwitcher.Switch(typeof(DeadState));
+        }
     }
 
 }

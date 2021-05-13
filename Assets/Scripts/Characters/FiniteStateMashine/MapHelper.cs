@@ -20,40 +20,117 @@ public class MapHelper : MonoBehaviour
     public Transform BlueCharacterSpawner;
 
     #region Helpers
-    public CharacterIdentifier GetNearestEnemy(CharacterIdentifier me)
+
+    public bool IsAllEnemiesDead(CharacterIdentifier me)
     {
-        if(me.Team == 0)
+        if (me.Team == 1)
         {
-            var nearest = BlueTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position)).FirstOrDefault();
-            return nearest;
-        } else if(me.Team == 1)
+            foreach (var enemy in RedTeamCharactes)
+            {
+                if (enemy.GetComponent<CharacterHealth>().GetLifeStatus() != LifeStatus.Dead)
+                {
+                    return false;
+                }
+            }
+            return true;
+        } else if(me.Team == 0)
         {
-            var nearest = RedTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position)).FirstOrDefault();
-            return nearest;
+            foreach (var enemy in BlueTeamCharactes)
+            {
+                if (enemy.GetComponent<CharacterHealth>().GetLifeStatus() != LifeStatus.Dead)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
         else
         {
             Debug.LogError($"Character {me.name} identifier error");
+            return false;
+        }
+    }
+
+    public bool IsAllFriendAreDead(CharacterIdentifier me)
+    {
+        if (me.Team == 0)
+        {
+            foreach (var enemy in RedTeamCharactes)
+            {
+                if (enemy.GetComponent<CharacterHealth>().GetLifeStatus() != LifeStatus.Dead)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else if (me.Team == 1)
+        {
+            foreach (var enemy in BlueTeamCharactes)
+            {
+                if (enemy.GetComponent<CharacterHealth>().GetLifeStatus() != LifeStatus.Dead)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else
+        {
+            Debug.LogError($"Character {me.name} identifier error");
+            return false;
+        }
+    }
+
+    public CharacterIdentifier GetNearestEnemy(CharacterIdentifier me)
+    {
+        if (IsAllEnemiesDead(me))
+        {
             return null;
+        }
+        else
+        {
+            if (me.Team == 0)
+            {
+                var nearest = BlueTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position)).FirstOrDefault();
+                return nearest;
+            }
+            else if (me.Team == 1)
+            {
+                var nearest = RedTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position)).FirstOrDefault();
+                return nearest;
+            }
+            else
+            {
+                Debug.LogError($"Character {me.name} identifier error");
+                return null;
+            }
         }
     }
 
     public CharacterIdentifier GetNearestFriends(CharacterIdentifier me)
     {
-        if (me.Team == 1)
+        if (IsAllFriendAreDead(me))
         {
-            var nearest = BlueTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position)).ToList();
-            return nearest[1];
-        }
-        else if (me.Team == 0)
-        {
-            var nearest = RedTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position)).ToList();
-            return nearest[1];
+            return null;
         }
         else
         {
-            Debug.LogError($"Character {me.name} identifier error");
-            return null;
+            if (me.Team == 1)
+            {
+                var nearest = BlueTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position)).ToList();
+                return nearest[1];
+            }
+            else if (me.Team == 0)
+            {
+                var nearest = RedTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position)).ToList();
+                return nearest[1];
+            }
+            else
+            {
+                Debug.LogError($"Character {me.name} identifier error");
+                return null;
+            }
         }
     }
 

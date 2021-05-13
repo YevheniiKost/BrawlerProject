@@ -25,16 +25,63 @@ public class CharacterEffectsManager : MonoBehaviour
         _sceneEffects.Add(new SnareEffect(duration, speedReducerInPercent, character, cor));
     }
 
+    public void StunEffect(CharacterIdentifier character, float duration)
+    {
+        for (int i = 0; i < _sceneEffects.Count; i++)
+        {
+            if (_sceneEffects[i].CharID == character && _sceneEffects[i].EffectType == EffectType.Stun)
+            {
+                StopCoroutine(_sceneEffects[i].EffectCoroutine);
+                _sceneEffects.Remove(_sceneEffects[i]);
+                break;
+            }
+            else { continue; }
+        }
+
+        var cor = StartCoroutine(StartStunCoroutine(character, duration));
+        _sceneEffects.Add(new StunEffect(duration, character, cor));
+    }
+
+    private IEnumerator StartStunCoroutine(CharacterIdentifier character, float duration)
+    {
+        foreach(var comp in character.GetComponentsInParent<IStunComponent>())
+        {
+            comp.SetIsStunned(true);
+        }
+
+        yield return new WaitForSeconds(duration);
+
+        foreach (var comp in character.GetComponentsInParent<IStunComponent>())
+        {
+            comp.SetIsStunned(false);
+        }
+
+        yield return null;
+    }
+
     private IEnumerator StartSnareCoroutine(CharacterIdentifier character, float speedReducer, float duration)
     {
         character.GetComponent<CharacterMovement>()?.ModifyMovementSpeed(speedReducer);
         yield return new WaitForSeconds(duration);
         character.GetComponent<CharacterMovement>()?.ReturnNormalSpeed();
+        yield return null;
     }
 
     private void Awake()
     {
         ServiceLocator.Register(this);
+        EventAggregator.Subscribe<CharacterDeath>(DeleteAllEffects);
+    }
+
+    private void DeleteAllEffects(object arg1, CharacterDeath character)
+    {
+        for (int i = 0; i < _sceneEffects.Count; i++)
+        {
+            if(_sceneEffects[i].CharID == character.Character.GetComponent<CharacterIdentifier>())
+            {
+                _sceneEffects.Remove(_sceneEffects[i]);
+            }
+        }
     }
 
     private void OnDestroy()

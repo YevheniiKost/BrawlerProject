@@ -3,6 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum LifeStatus
+{
+    Alright,
+    NeedHealth,
+    Dead
+}
+
+
 public class CharacterHealth : MonoBehaviour
 {
     public event Action<float> OnHealthPctChange = delegate { };
@@ -10,24 +18,40 @@ public class CharacterHealth : MonoBehaviour
     [SerializeField] private float _initialHealh;
 
     public float PercentOfHealthToStartRetreat = 30f;
-    public bool IsCharacterDead => _isCharacteDead;
 
-    private bool _isCharacteDead;
     private float _currentHealh;
-    
 
-    public void ModifyHealth(float amount)
+    public LifeStatus GetLifeStatus()
     {
-        if (!_isCharacteDead)
+        if(_currentHealh > PercentOfHealthToStartRetreat)
+        {
+            return LifeStatus.Alright;
+        } else if(_currentHealh <= PercentOfHealthToStartRetreat && _currentHealh > 0)
+        {
+            return LifeStatus.NeedHealth;
+        }
+        else if(_currentHealh <= 0)
+        {
+            return LifeStatus.Dead;
+        }
+        else { return LifeStatus.Dead; }
+    }
+
+
+    public void ModifyHealth(int amount, CharacterIdentifier hiter)
+    {
+        if (GetLifeStatus() != LifeStatus.Dead)
         {
             _currentHealh += amount;
 
             float currentHealthPct = (float)_currentHealh / (float)_initialHealh;
             OnHealthPctChange(currentHealthPct);
 
+            EventAggregator.Post(this, new CharacterHit { Hiter = hiter, Amount = amount, Character = this });
+
             if (_currentHealh <= 0)
             {
-                ProcessCharacterDead();
+                ProcessCharacterDead(hiter);
             }
         }
         else
@@ -46,8 +70,8 @@ public class CharacterHealth : MonoBehaviour
         _currentHealh = _initialHealh;
     }
 
-    private void ProcessCharacterDead()
+    private void ProcessCharacterDead(CharacterIdentifier killer)
     {
-        return;
+        EventAggregator.Post(this, new CharacterDeath { Killer = killer, Character = this });
     }
 }
