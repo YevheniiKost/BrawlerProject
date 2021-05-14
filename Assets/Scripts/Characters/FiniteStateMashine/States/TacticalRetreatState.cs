@@ -23,7 +23,7 @@ public class TacticalRetreatState : BaseState<AISharedContent>
         {
             _stateSwitcher.Switch(typeof(IdleState));
         }
-        else
+        else if (_sharedContent.Health.GetLifeStatus() == LifeStatus.Dead)
         {
             _stateSwitcher.Switch(typeof(DeadState));
         }

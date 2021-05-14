@@ -51,7 +51,7 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
     #region AI movement
     public void SetTarget(Transform target)
     {
-        if (!ForcedStop)
+        if (!ForcedStop && target != null)
         {
             _navMeshAgent.isStopped = false;
             _navMeshAgent.destination = target.position;
@@ -92,7 +92,7 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
 
     private void Update()
     {
-        if (_iD.IsControlledByThePlayer && !ForcedStop)
+        if (_iD.IsControlledByThePlayer && !ForcedStop && GetComponent<CharacterHealth>()?.GetLifeStatus() != LifeStatus.Dead)
             ProcessPlayerMovement();
         else
             ProcessAIMovemet();

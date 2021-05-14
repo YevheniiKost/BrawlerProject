@@ -92,13 +92,27 @@ public class MapHelper : MonoBehaviour
         {
             if (me.Team == 0)
             {
-                var nearest = BlueTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position)).FirstOrDefault();
-                return nearest;
+                var nearest = BlueTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position));
+                foreach (var near in nearest)
+                {
+                    if (near.GetComponent<CharacterHealth>().GetLifeStatus() == LifeStatus.Dead)
+                        continue;
+                    else
+                        return near;
+                }
+                return null;
             }
             else if (me.Team == 1)
             {
-                var nearest = RedTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position)).FirstOrDefault();
-                return nearest;
+                var nearest = RedTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position));
+                foreach (var near in nearest)
+                {
+                    if (near.GetComponent<CharacterHealth>().GetLifeStatus() == LifeStatus.Dead)
+                        continue;
+                    else
+                        return near;
+                }
+                return null;
             }
             else
             {
@@ -169,6 +183,7 @@ public class MapHelper : MonoBehaviour
                     searchIndex++;
                 }
             } return null;
+
         } else if(me.Team == 1)
         {
             var nearestCrystals = RedCrystalsList.OrderBy(t => Vector3.Distance(me.transform.position, t.transform.position)).ToArray();

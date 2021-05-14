@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: JiseleAnimOverrideController
+  m_Controller: {fileID: 9100000, guid: 2a5ee12368dd9fd47a92d218c60e8cf5, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 2f06624c81669634cb7a93abd411aa4d, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 77fe36c11c414334e9df1261ee6b9e56, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: b223d6ff1fb238948ae60bf04236dd01, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: f1de4022115f1ae40a9f80d878c643d2, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 358f45e8786bdd64d8b440e0fb2fda10, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 0258525539d94ac4881e4eee71a87dab, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 1b299fb25ac4aff4da93000a413b1341, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 2b3a573d579fd9f49809c579139713d8, type: 2}

@@ -44,6 +44,10 @@ public class GroundCanvas : MonoBehaviour
                 var angle = Mathf.Atan2(_inputManager.SecondSkillDirection.x, _inputManager.SecondSkillDirection.y) * Mathf.Rad2Deg;
                 _secondSkillPointer.transform.rotation = Quaternion.Euler(0, angle, 0);
             }
+            else
+            {
+                _secondSkillPointer.gameObject.SetActive(false);
+            }
      
         }
         else

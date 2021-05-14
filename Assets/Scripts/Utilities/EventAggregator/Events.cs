@@ -21,4 +21,10 @@ public class CharacterDeath
     public CharacterIdentifier Killer;
 }
 
+public class AddHealthBar
+{
+    public CharacterHealth Character;
+}
+
+
 #endregion

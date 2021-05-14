@@ -23,10 +23,10 @@ public class CharacterHealth : MonoBehaviour
 
     public LifeStatus GetLifeStatus()
     {
-        if(_currentHealh > PercentOfHealthToStartRetreat)
+        if(PercentOfHealth() > PercentOfHealthToStartRetreat)
         {
             return LifeStatus.Alright;
-        } else if(_currentHealh <= PercentOfHealthToStartRetreat && _currentHealh > 0)
+        } else if(PercentOfHealth() <= PercentOfHealthToStartRetreat && _currentHealh > 0)
         {
             return LifeStatus.NeedHealth;
         }
@@ -60,18 +60,24 @@ public class CharacterHealth : MonoBehaviour
         }
     }
 
-    public float PercentOfHealth()
-    {
-        return _currentHealh / _initialHealh * 100;
-    }
-
     private void Awake()
     {
         _currentHealh = _initialHealh;
     }
 
+    private void Start()
+    {
+        EventAggregator.Post(this, new AddHealthBar { Character = this });
+    }
+
     private void ProcessCharacterDead(CharacterIdentifier killer)
     {
         EventAggregator.Post(this, new CharacterDeath { Killer = killer, Character = this });
+        
+    }
+
+    private float PercentOfHealth()
+    {
+        return _currentHealh / _initialHealh * 100;
     }
 }

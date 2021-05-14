@@ -40,10 +40,11 @@ public abstract class CharacterCombat : MonoBehaviour, IStunComponent
 
     #endregion
 
-    protected bool _isStunned;
-
     public float EnemyDetectRadius = 10f;
+    [HideInInspector]
     public bool IsEnemyDetected;
+
+    protected bool _isStunned;
     protected float _timeToNextAttack = 0;
     protected Transform _target;
     protected CharacterEffectsManager _effectsManager;
