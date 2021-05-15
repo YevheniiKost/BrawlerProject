@@ -39,8 +39,8 @@ public class DamagePopup : MonoBehaviour
 
         _text.text = Mathf.Abs(amount).ToString();
 
-        transform.DOBlendableScaleBy(Vector3.one * _scalerReduser, _lifeTime);
-        _text.transform.DOBlendableMoveBy(Vector3.up * _moveAmount, _lifeTime);
+        transform.DOBlendableScaleBy(Vector3.one * _scalerReduser, _lifeTime-.1f);
+        _text.transform.DOBlendableMoveBy(Vector3.up * _moveAmount, _lifeTime-.1f);
 
         Destroy(this.gameObject, _lifeTime);
     }

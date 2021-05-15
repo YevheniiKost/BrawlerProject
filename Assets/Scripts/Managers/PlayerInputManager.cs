@@ -10,6 +10,9 @@ public class PlayerInputManager : MonoBehaviour
     public bool IsPlayerHoldingMovementButton;
 
     [HideInInspector]
+    public bool IsPlayerHoldingAutoattackButton;
+
+    [HideInInspector]
     public Vector3 FirstSkillDirection;
     [HideInInspector]
     public bool IsPlayerHoldingFirstSkillButton;

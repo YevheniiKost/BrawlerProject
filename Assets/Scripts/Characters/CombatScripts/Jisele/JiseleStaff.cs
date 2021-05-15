@@ -10,11 +10,7 @@ public class JiseleStaff : MonoBehaviour
 
     private Vector3 _rotationVector;
     private float _rot;
-
-    private void Start()
-    {
-        _circle.transform.DOLocalRotate(new Vector3(0, 360, 0), _rotationSpeed).SetLoops(-1);
-    }
+   
     private void Update()
     {
         _rot += _rotationSpeed;

@@ -8,7 +8,6 @@ using UnityEngine.AI;
 public class CharacterAnimation : MonoBehaviour, IStunComponent
 {
     [SerializeField] private Animator _animator;
-    [SerializeField] private AnimatorOverrideController _overrideController;
 
     private CharacterMovement _movement;
     private CharacterHealth _health;
@@ -57,14 +56,6 @@ public class CharacterAnimation : MonoBehaviour, IStunComponent
 
         EventAggregator.Subscribe<CharacterDeath>(OnCharacterDeathHandler);
 
-    }
-
-    private void Start()
-    {
-        if(_overrideController != null)
-        {
-            _animator.runtimeAnimatorController = _overrideController;
-        }
     }
 
     private void OnDestroy()

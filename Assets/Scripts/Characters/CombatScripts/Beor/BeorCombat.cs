@@ -69,7 +69,7 @@ public class BeorCombat : CharacterCombat
             {
                 transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_firstSkillDirection.x, _firstSkillDirection.y) * Mathf.Rad2Deg, 0);
             }
-            OnFirsSkillUse();
+            OnFirstSkillUse();
             _shieldBashCollider.gameObject.SetActive(true);
             _firstAbilityCooldownTimer = _shieldBashCooldown;
         }

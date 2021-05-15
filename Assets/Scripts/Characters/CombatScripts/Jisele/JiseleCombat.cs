@@ -10,6 +10,25 @@ public class JiseleCombat : CharacterCombat
     [SerializeField] private JiseleAutoattackSphere _autoattackSphere;
     [SerializeField] private Transform _autoattackStartPosition;
 
+    [Header("Fireball")]
+    [SerializeField] private int _fireaballDamage;
+    [SerializeField] private float _fireballFlyDistance;
+    [SerializeField] private float _fireballSpeed;
+    [SerializeField] private float _fireballCooldown;
+    [SerializeField] private JiseleFireball _fireballPrefab;
+    [SerializeField] private Transform _fireballStartPoint;
+
+    [Header("Meteor")]
+    [SerializeField] private float _secondAbilityRadius;
+    [SerializeField] private float _secondAbilityCooldown;
+    [SerializeField] private int _meteorExplosionDamage;
+    [SerializeField] private float _meteorExplosionRadius;
+    [SerializeField] private int _fireAreaDamage;
+    [SerializeField] private float _fireAreaDamageRate;
+    [SerializeField] private float _fireAreaRadius;
+    [SerializeField] private float _fireAreaLifeTime;
+    [SerializeField] private JiseleMeteor _meteorPrefab;
+
     private Vector3 _autoattackDirection = Vector3.zero;
     private Vector3 _firstSkillDirection = Vector3.zero;
     private Vector3 _secondSkillDirection = Vector3.zero;
@@ -35,12 +54,50 @@ public class JiseleCombat : CharacterCombat
 
     public override void UseFirstSkill()
     {
-        throw new System.NotImplementedException();
+        if (_firstAbilityCooldownTimer == 0 && !_isStunned)
+        {
+            if (_firstSkillDirection == Vector3.zero)
+            {
+                if (_target != null)
+                {
+                    var dirToTarget = _target.transform.position - transform.position;
+                    _firstSkillDirection = new Vector3(dirToTarget.x, dirToTarget.z, 0).normalized;
+                    transform.LookAt(_target);
+                }
+                else
+                {
+                    _firstSkillDirection = Vector3.up;
+                }
+            }
+
+            transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_firstSkillDirection.x, _firstSkillDirection.y) * Mathf.Rad2Deg, 0);
+            OnFirstSkillUse();
+            GetComponent<CharacterMovement>()?.ProcessForcedStop();
+            _firstAbilityCooldownTimer = _fireballCooldown;
+        }
     }
 
     public override void UseSecondSkill()
     {
-        throw new System.NotImplementedException();
+        if (_secondAbilityCooldownTimer == 0 && !_isStunned)
+        {
+            if(_secondSkillDirection == Vector3.zero)
+            {
+                if(_target != null && Vector3.Distance(transform.position, _target.transform.position) <= _secondAbilityRadius)
+                {
+                    _secondSkillDirection = _target.transform.position - transform.position;
+                }
+            }
+            else
+            {
+                var direction = new Vector3(_secondSkillDirection.x, 0, _secondSkillDirection.y);
+                _secondSkillDirection = direction * _secondAbilityRadius;
+            }
+
+            OnSecondSkillUse();
+            GetComponent<CharacterMovement>()?.ProcessForcedStop();
+            _secondAbilityCooldownTimer = _secondAbilityCooldown;
+        }
     }
 
     #endregion
@@ -101,27 +158,43 @@ public class JiseleCombat : CharacterCombat
 
     private void FirstSkillHit()
     {
-        throw new NotImplementedException();
+        _firstSkillDirection = new Vector3(_firstSkillDirection.x, 0, _firstSkillDirection.y);
+        var fireBall = Instantiate(_fireballPrefab, _fireballStartPoint.position, Quaternion.identity);
+        fireBall.SetData(_fireaballDamage, _fireballSpeed, _fireballFlyDistance, _firstSkillDirection, _charID);
+        GetComponent<CharacterMovement>()?.UndoForcedStop();
     }
 
     private void SecondSkillHit()
     {
-        throw new NotImplementedException();
+        var meteor = Instantiate(_meteorPrefab, transform.position + _secondSkillDirection, Quaternion.identity);
+        meteor.GetData(_meteorExplosionDamage, _fireAreaDamage, _meteorExplosionRadius, _fireAreaDamageRate, _fireAreaDamageRate, _fireAreaLifeTime, _charID);
+        GetComponent<CharacterMovement>()?.UndoForcedStop();
     }
 
+    #region Skills player input
     private void AutoAttackHandler(object arg1, AutoattackEvent arg2)
     {
         if (_charID.IsControlledByThePlayer)
             AutoAttack();
     }
 
-    private void FirstSkillInputHandler(object arg1, FirstSkillEvent arg2)
+    private void FirstSkillInputHandler(object arg1, FirstSkillEvent skill)
     {
-        throw new NotImplementedException();
+        if (_charID.IsControlledByThePlayer)
+        {
+            _firstSkillDirection = skill.Direction;
+            UseFirstSkill();
+        }
     }
 
-    private void SecondSkillInputHandler(object arg1, SecondSkillEvent arg2)
+    private void SecondSkillInputHandler(object arg1, SecondSkillEvent skill)
     {
-        throw new NotImplementedException();
+        if (_charID.IsControlledByThePlayer)
+        {
+            _secondSkillDirection = skill.Direction;
+            UseSecondSkill();
+        }
     }
+
+    #endregion
 }

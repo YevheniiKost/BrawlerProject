@@ -60,7 +60,7 @@ public abstract class CharacterCombat : MonoBehaviour, IStunComponent
     public abstract void UseSecondSkill();
     public abstract void AttackBehavior();
     public virtual void OnAutoAttack() => AutoAttackWasUsed?.Invoke();
-    public virtual void OnFirsSkillUse() => FirstSkillWasUsed?.Invoke();
+    public virtual void OnFirstSkillUse() => FirstSkillWasUsed?.Invoke();
     public virtual void OnSecondSkillUse() => SecondSkillWasUsed?.Invoke();
 
  

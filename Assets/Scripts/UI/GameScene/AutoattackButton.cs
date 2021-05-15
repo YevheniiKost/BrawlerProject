@@ -1,18 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class AutoattackButton : MonoBehaviour
+public class AutoattackButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 {
-    // Start is called before the first frame update
-    void Start()
+    private PlayerInputManager _input;
+    private void Start()
     {
-        
+        _input = ServiceLocator.Resolve<PlayerInputManager>();     
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnPointerDown(PointerEventData eventData)
     {
-        
+        _input.IsPlayerHoldingAutoattackButton = true;
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        _input.IsPlayerHoldingAutoattackButton = false;
     }
 }

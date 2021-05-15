@@ -5,37 +5,39 @@ using UnityEngine.UI;
 
 public class GroundCanvas : MonoBehaviour
 {
-    [SerializeField] private Transform _firstSkillPointer;
-    [SerializeField] private Transform _secondSkillPointer;
+    [SerializeField] protected Transform _autoattackRadius;
+    [SerializeField] protected Transform _firstSkillPointer;
+    [SerializeField] protected Transform _secondSkillPointer;
 
-    private PlayerInputManager _inputManager;
+    protected PlayerInputManager _inputManager;
 
-    private Vector3 _firstSkillDirection = Vector3.zero;
-    private Vector3 _secondSkillDirection = Vector3.zero;
+    protected Vector3 _firstSkillDirection = Vector3.zero;
+    protected Vector3 _secondSkillDirection = Vector3.zero;
 
     private void Start()
     {
         _inputManager = ServiceLocator.Resolve<PlayerInputManager>();
-       
     }
 
     private void Update()
     {
-        if (_inputManager.IsPlayerHoldingFirstSkillButton)
+       
+    }
+
+    protected void AutoattackCircle()
+    {
+        if (_inputManager.IsPlayerHoldingAutoattackButton)
         {
-            if (_inputManager.FirstSkillDirection != Vector3.zero)
-            {
-                _firstSkillPointer.gameObject.SetActive(true);
-                var angle = Mathf.Atan2(_inputManager.FirstSkillDirection.x, _inputManager.FirstSkillDirection.y) * Mathf.Rad2Deg;
-                _firstSkillPointer.transform.rotation = Quaternion.Euler(0, angle, 0);
-                
-            }
+            _autoattackRadius.gameObject.SetActive(true);
         }
         else
         {
-            _firstSkillPointer.gameObject.SetActive(false);
+            _autoattackRadius.gameObject.SetActive(false);
         }
+    }
 
+    protected void ForwardAimingSecondSkill()
+    {
         if (_inputManager.IsPlayerHoldingSecondSkillButton)
         {
             if (_inputManager.SecondSkillDirection != Vector3.zero)
@@ -48,12 +50,50 @@ public class GroundCanvas : MonoBehaviour
             {
                 _secondSkillPointer.gameObject.SetActive(false);
             }
-     
+
         }
         else
         {
             _secondSkillPointer.gameObject.SetActive(false);
         }
+    }
 
+    protected void ForwardAimingFirstSkill()
+    {
+        if (_inputManager.IsPlayerHoldingFirstSkillButton)
+        {
+            if (_inputManager.FirstSkillDirection != Vector3.zero)
+            {
+                _firstSkillPointer.gameObject.SetActive(true);
+                var angle = Mathf.Atan2(_inputManager.FirstSkillDirection.x, _inputManager.FirstSkillDirection.y) * Mathf.Rad2Deg;
+                _firstSkillPointer.transform.rotation = Quaternion.Euler(0, angle, 0);
+
+            }
+        }
+        else
+        {
+            _firstSkillPointer.gameObject.SetActive(false);
+        }
+    }
+    protected void TatgetAimingSecondSkill(float skillRadius)
+    {
+        if (_inputManager.IsPlayerHoldingSecondSkillButton)
+        {
+            if (_inputManager.SecondSkillDirection != Vector3.zero)
+            {
+                _secondSkillPointer.gameObject.SetActive(true);
+                _secondSkillPointer.position = new Vector3(_inputManager.SecondSkillDirection.x, 0, _inputManager.SecondSkillDirection.y) * skillRadius + transform.position;
+
+            }
+            else
+            {
+                _secondSkillPointer.gameObject.SetActive(false);
+            }
+
+        }
+        else
+        {
+            _secondSkillPointer.gameObject.SetActive(false);
+        }
     }
 }
