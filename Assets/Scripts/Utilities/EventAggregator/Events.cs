@@ -7,7 +7,9 @@ using UnityEngine;
 public class AutoattackEvent { }
 public class FirstSkillEvent { public Vector3 Direction; }
 public class SecondSkillEvent { public Vector3 Direction; }
+#endregion
 
+#region Character interaction events
 public class CharacterHit
 {
     public CharacterHealth Character;
@@ -26,5 +28,16 @@ public class AddHealthBar
     public CharacterHealth Character;
 }
 
+#endregion
+
+#region UI events
+
+public class OnGameModClick { }
+public class OnSelectHeroClick { }
+public class OnReturnToMainMenuClick { }
+public class OnPlayClick { }
+
+public class SetWindow { public IWindow Window; }
 
 #endregion
+
