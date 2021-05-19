@@ -2,31 +2,119 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public static int SelectedHero;
+    public int SelectedHero;
+    private readonly string SelectedHeroKey = "SelecterHero";
 
     public List<HeroSelecterData> ListOfHeroes = new List<HeroSelecterData>();
+
+    public int HumberOfHeroesInTeam;
+
+    public TeamMatchSetup CurrentTeamMatchData;
 
     private void Awake()
     {
         DontDestroyOnLoad(this);
 
-        if(Instance != null)
+        if (Instance != null)
             Destroy(this);
         else
             Instance = this;
 
         ServiceLocator.Register(this);
-    }
-    private void Start()
-    {
+
+        EventAggregator.Subscribe<RequestForTeamMatchData>(GiveTeamMatchData);
+        EventAggregator.Subscribe<SelectAndSaveCurrentHero>(SelectAndSaveCurrentCharacter);
+        EventAggregator.Subscribe<OnPlayClick>(ProcessPlayClick);
+
+        SelectedHero = PlayerPrefs.GetInt(SelectedHeroKey);
+
         LoadHeroes();
     }
+
+    private void Start()
+    {
+        
+        GenerateMatchData();
+    }
+
+    private void ProcessPlayClick(object arg1, OnPlayClick arg2)
+    {
+        SceneManager.LoadScene(GameConstants.Scenes.TeamMatch);
+    }
+
+    #region Work with Match data
+    private void GiveTeamMatchData(object arg1, RequestForTeamMatchData arg2)
+    {
+        EventAggregator.Post(this, new TakeTeamFightData { MatchData = CurrentTeamMatchData });
+    }
+    private void SelectAndSaveCurrentCharacter(object arg1, SelectAndSaveCurrentHero data)
+    {
+        SelectedHero = data.HeroIndex;
+        GenerateMatchData();
+        PlayerPrefs.SetInt(SelectedHeroKey, SelectedHero);
+    }
+    private void GenerateMatchData()
+    {
+        int numerInTeam = 3;
+        var list = new List<CharacterName>(ListOfRandomCharacters(numerInTeam * 2));
+        var blueList = new List<CharacterName>(list);
+        blueList.RemoveRange(numerInTeam, numerInTeam);
+        var redList = new List<CharacterName>(list);
+        redList.RemoveRange(0, numerInTeam);
+        blueList[0] = ListOfHeroes[SelectedHero].Name;
+        var data = new TeamMatchSetup(redList, blueList, blueList[0], 180, numerInTeam);
+        CurrentTeamMatchData = data;
+    }
+    private List<CharacterName> ListOfRandomCharacters(int lenght)
+    {
+        List<CharacterName> list = new List<CharacterName>();
+        var numberOfCharacters = Enum.GetValues(typeof(CharacterName)).Length;
+        for (int i = 0; i < lenght; i++)
+        {
+            CharacterName name;
+            if (i < numberOfCharacters)
+            {
+                name = (CharacterName)Enum.GetValues(typeof(CharacterName)).GetValue(i);
+            }
+            else
+            {
+                name = (CharacterName)UnityEngine.Random.Range(0, numberOfCharacters);
+            }
+            if (list.Contains(name))
+            {
+                for (int y = 0; y < numberOfCharacters; y++)
+                {
+                    name = (CharacterName)Enum.GetValues(name.GetType()).GetValue(y);
+                    if (!list.Contains(name))
+                    {
+                        list.Add(name);
+                        break;
+                    }
+                    else
+                        continue;
+                }
+                name = (CharacterName)UnityEngine.Random.Range(0, numberOfCharacters);
+                list.Add(name);
+                continue;
+            }
+            else
+            {
+                list.Add(name);
+                continue;
+            }
+        }
+
+        return list;
+    }
+
+    #endregion
 
     #region Heroes data loading
 
@@ -71,4 +159,27 @@ public class HeroSelecterData
     public Sprite SecondSkillImage;
     public TextAsset FirstSkillDescription;
     public TextAsset SecondSkillDescription;
+}
+
+[Serializable]
+public class TeamMatchSetup
+{
+    public List<CharacterName> RedTeam = new List<CharacterName>();
+    public List<CharacterName> BlueTeam = new List<CharacterName>();
+
+    public CharacterName PlayerCharacter;
+
+    public float BattleDuration;
+
+    public int NumberOfCharactesInTeam;
+
+    public TeamMatchSetup(List<CharacterName> redTeam, List<CharacterName> blueTeam, CharacterName playerCharacter, float duration, int numberInTeam)
+    {
+        RedTeam = redTeam;
+        BlueTeam = blueTeam;
+        PlayerCharacter = playerCharacter;
+        BattleDuration = duration;
+        NumberOfCharactesInTeam = numberInTeam;
+    }
+
 }

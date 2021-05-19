@@ -17,6 +17,7 @@ public class Healthbar : MonoBehaviour
     private Image _mainImage;
     private Camera _mainCamera;
 
+    private Coroutine _currentcoroutine;
     private void Start()
     {
         _mainCamera = ServiceLocator.Resolve<MainCamera>().GetComponent<Camera>();
@@ -28,9 +29,17 @@ public class Healthbar : MonoBehaviour
             transform.position = _mainCamera.WorldToScreenPoint(_health.transform.position + Vector3.up * _positionOffcet);
     }
 
+    private void OnDestroy()
+    {
+        StopCoroutine(_currentcoroutine);
+        _health.OnHealthPctChange -= HandleHealthChange;
+    }
+
     private void HandleHealthChange(float pct)
     {
-        StartCoroutine(ChangeToPct(pct));
+        if (_currentcoroutine != null)
+            StopCoroutine(_currentcoroutine);
+        _currentcoroutine = StartCoroutine(ChangeToPct(pct));
     }
 
     private IEnumerator ChangeToPct(float pct)

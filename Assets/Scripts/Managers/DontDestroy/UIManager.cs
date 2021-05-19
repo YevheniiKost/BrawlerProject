@@ -24,6 +24,13 @@ public class UIManager : MonoBehaviour
 
         EventAggregator.Subscribe<SetWindow>(OnSetWindow);
         EventAggregator.Subscribe<OnGameModClick>(OnGameModClickHandler);
+        EventAggregator.Subscribe<OnSelectHeroClick>(OnSelectHeroClickHandler);
+    }
+
+    private void OnSelectHeroClickHandler(object arg1, OnSelectHeroClick arg2)
+    {
+        MainWindow.CloseWindow();
+        SelectHeroWindow.OpenWindow();
     }
 
     private void OnGameModClickHandler(object arg1, OnGameModClick arg2)

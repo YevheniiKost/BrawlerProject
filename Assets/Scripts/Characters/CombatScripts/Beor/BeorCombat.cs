@@ -70,6 +70,7 @@ public class BeorCombat : CharacterCombat
                 transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_firstSkillDirection.x, _firstSkillDirection.y) * Mathf.Rad2Deg, 0);
             }
             OnFirstSkillUse();
+            FirstAbilityUsedEvent(_shieldBashCooldown);
             _shieldBashCollider.gameObject.SetActive(true);
             _firstAbilityCooldownTimer = _shieldBashCooldown;
         }
@@ -95,6 +96,7 @@ public class BeorCombat : CharacterCombat
           
              transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_secondSkillDirection.x, _secondSkillDirection.y) * Mathf.Rad2Deg, 0);
              OnSecondSkillUse();
+             SecondAvilityUsedEvent(_shieldThrowCooldown);
              GetComponent<CharacterMovement>()?.ProcessForcedStop();
             _secondAbilityCooldownTimer = _shieldThrowCooldown;
         }

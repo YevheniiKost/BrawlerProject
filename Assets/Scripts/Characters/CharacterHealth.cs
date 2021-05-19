@@ -5,6 +5,7 @@ using UnityEngine;
 
 public enum LifeStatus
 {
+    FullHealth,
     Alright,
     NeedHealth,
     Dead
@@ -23,20 +24,24 @@ public class CharacterHealth : MonoBehaviour
 
     public LifeStatus GetLifeStatus()
     {
-        if(PercentOfHealth() > PercentOfHealthToStartRetreat)
+        if (PercentOfHealth() >= 100)
+        {
+            return LifeStatus.FullHealth;
+        }
+        else if (PercentOfHealth() > PercentOfHealthToStartRetreat)
         {
             return LifeStatus.Alright;
-        } else if(PercentOfHealth() <= PercentOfHealthToStartRetreat && _currentHealh > 0)
+        }
+        else if (PercentOfHealth() <= PercentOfHealthToStartRetreat && _currentHealh > 0)
         {
             return LifeStatus.NeedHealth;
         }
-        else if(_currentHealh <= 0)
+        else if (_currentHealh <= 0)
         {
             return LifeStatus.Dead;
         }
         else { return LifeStatus.Dead; }
     }
-
 
     public void ModifyHealth(int amount, CharacterIdentifier hiter)
     {
@@ -60,6 +65,13 @@ public class CharacterHealth : MonoBehaviour
         }
     }
 
+    public void RenewCharacter()
+    {
+        _currentHealh += _initialHealh;
+        EventAggregator.Post(this, new AddHealthBar { Character = this });
+        EventAggregator.Post(this, new CharacterWakeUp { Character = this });
+    }
+
     private void Awake()
     {
         _currentHealh = _initialHealh;
@@ -73,7 +85,6 @@ public class CharacterHealth : MonoBehaviour
     private void ProcessCharacterDead(CharacterIdentifier killer)
     {
         EventAggregator.Post(this, new CharacterDeath { Killer = killer, Character = this });
-        
     }
 
     private float PercentOfHealth()

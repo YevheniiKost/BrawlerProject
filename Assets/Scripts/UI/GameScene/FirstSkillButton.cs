@@ -9,10 +9,14 @@ public class FirstSkillButton : SkillButton, IPointerUpHandler, IPointerDownHand
 {
     public void OnPointerUp(PointerEventData eventData)
     {
-        EventAggregator.Post(this, new FirstSkillEvent() { Direction = _direction });
+        if (!CancleButton.IsCancle)
+        {
+            EventAggregator.Post(this, new FirstSkillEvent() { Direction = _direction });
+        }
         _inputManager.IsPlayerHoldingFirstSkillButton = false;
-        _direction = Vector3.zero; 
+        _direction = Vector3.zero;
 
+        EventAggregator.Post(this, new OnActivateCancleButton { IsOn = false });
         SetBackgroundAndThumbleVisibility(false);
     }
 

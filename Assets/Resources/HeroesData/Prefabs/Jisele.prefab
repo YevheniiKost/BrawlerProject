@@ -481,6 +481,10 @@ MonoBehaviour:
   _autoattackRadius: {fileID: 4447759100972621740}
   _firstSkillPointer: {fileID: 3614036112922998677}
   _secondSkillPointer: {fileID: 7384928706390289}
+  _skillsImages:
+  - {fileID: 7243127947359545917}
+  - {fileID: 7715396023855588118}
+  - {fileID: 387961840872220019}
   _secondSkillRadius: 8
 --- !u!1 &7159867632625058921
 GameObject:
@@ -849,7 +853,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d2ee619483239145b117c9519a1539f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ControlledByKeyboard: 0
+  ControlledByKeyboard: 1
 --- !u!114 &7444136698098919058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -880,7 +884,7 @@ MonoBehaviour:
   _autoAttackDamage: 30
   _autoAttackRange: 7
   _autoAttackRate: 1.5
-  EnemyDetectRadius: 15
+  EnemyDetectRadius: 12
   IsEnemyDetected: 0
   _autoattackFlyDistance: 3
   _autoattackFlySpeed: 2.5
@@ -889,13 +893,13 @@ MonoBehaviour:
   _autoattackStartPosition: {fileID: 4003448864803235790}
   _fireaballDamage: 100
   _fireballFlyDistance: 8
-  _fireballSpeed: 8
-  _fireballCooldown: 2
+  _fireballSpeed: 11
+  _fireballCooldown: 4
   _fireballPrefab: {fileID: 5232169243822499809, guid: 9ba91d3caa00b4041b1a331096816be8,
     type: 3}
   _fireballStartPoint: {fileID: 7460315557894744173}
   _secondAbilityRadius: 8
-  _secondAbilityCooldown: 3
+  _secondAbilityCooldown: 15
   _meteorExplosionDamage: 200
   _meteorExplosionRadius: 2
   _fireAreaDamage: 30

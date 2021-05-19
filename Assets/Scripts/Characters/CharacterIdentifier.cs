@@ -28,5 +28,6 @@ public enum CharacterName
 {
     Beor,
     Jisele
+  
 }
 

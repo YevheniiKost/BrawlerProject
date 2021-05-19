@@ -11,7 +11,7 @@ public class EnemySearchState : BaseState<AISharedContent>
 
     public override void Execute()
     {
-        if (_sharedContent.Health.GetLifeStatus() == LifeStatus.Alright)
+        if (_sharedContent.Health.GetLifeStatus() == LifeStatus.Alright || _sharedContent.Health.GetLifeStatus() == LifeStatus.FullHealth)
         {
             if (!_sharedContent.MapHelper.IsAllEnemiesDead(_sharedContent.Identifier))
             {

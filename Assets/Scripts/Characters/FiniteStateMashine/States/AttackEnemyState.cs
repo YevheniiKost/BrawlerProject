@@ -12,13 +12,18 @@ public class AttackEnemyState : BaseState<AISharedContent>
 
     public override void Execute()
     {
-        if (_sharedContent.Health.GetLifeStatus() == LifeStatus.Alright)
+        if (_sharedContent.Health.GetLifeStatus() == LifeStatus.Alright || _sharedContent.Health.GetLifeStatus() == LifeStatus.FullHealth)
         {
             if (_sharedContent.Combat.Target != null)
             {
                 if (Vector3.Distance((_sharedContent.Combat.Target).position, _sharedContent.Identifier.transform.position) > _sharedContent.Combat.AutoattackRange)
                 {
+                    if(_sharedContent.Combat.Target != null)
                     _sharedContent.Movement.SetTarget(_sharedContent.Combat.Target);
+                    else
+                    {
+                        _sharedContent.Movement.SetTarget(_sharedContent.MapHelper.GetNearestEnemy(_sharedContent.Identifier).transform);
+                    }
                 }
                 else
                 {

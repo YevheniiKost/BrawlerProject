@@ -19,7 +19,7 @@ public class TacticalRetreatState : BaseState<AISharedContent>
             else if (_sharedContent.Identifier.Team == 1)
                 _sharedContent.Movement.SetTarget(_sharedContent.MapHelper.BlueCharacterSpawner);
         }
-        else if(_sharedContent.Health.GetLifeStatus() == LifeStatus.Alright)
+        else if(_sharedContent.Health.GetLifeStatus() == LifeStatus.FullHealth)
         {
             _stateSwitcher.Switch(typeof(IdleState));
         }

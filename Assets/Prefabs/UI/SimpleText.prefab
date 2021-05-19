@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3267227971359294701}
   - component: {fileID: 573980275343591958}
   m_Layer: 5
-  m_Name: AudioOnText
+  m_Name: SimpleText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Audio ON
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 11f97e100d9d0b54db6eac941908a8ff, type: 2}
-  m_sharedMaterial: {fileID: -8468323835047154505, guid: 11f97e100d9d0b54db6eac941908a8ff,
+  m_fontAsset: {fileID: 11400000, guid: 4d6733a4eee1fe9428719c7eaa756a97, type: 2}
+  m_sharedMaterial: {fileID: -3097546392126254161, guid: 4d6733a4eee1fe9428719c7eaa756a97,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}

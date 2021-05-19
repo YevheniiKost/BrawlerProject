@@ -71,7 +71,6 @@ public abstract class CharacterCombat : MonoBehaviour, IStunComponent
 
         StartCoroutine(StartEnemySearchCycle());
     }
-
     protected IEnumerator StartEnemySearchCycle()
     {
         while (true)
@@ -80,7 +79,6 @@ public abstract class CharacterCombat : MonoBehaviour, IStunComponent
             DetectEnemy();
         }
     }
-
     private void DetectEnemy()
     {
         if (_mapHelper.GetNearestEnemy(_charID) == null)
@@ -109,6 +107,16 @@ public abstract class CharacterCombat : MonoBehaviour, IStunComponent
                 _target = null;
             }
         }
+    }
+    protected void FirstAbilityUsedEvent(float CD)
+    {
+        if (_charID.IsControlledByThePlayer)
+            EventAggregator.Post(this, new FirstAbilityWasUsed { Cooldown = CD });
+    }
+    protected void SecondAvilityUsedEvent(float CD)
+    {
+        if(_charID.IsControlledByThePlayer)
+            EventAggregator.Post(this, new SecondAbilityWasUsed { Cooldown = CD });
     }
 }
 

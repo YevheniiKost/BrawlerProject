@@ -12,7 +12,7 @@ public class IdleState : BaseState<AISharedContent>
 
     public override void Execute()
     {
-        if (_sharedContent.Health.GetLifeStatus() == LifeStatus.Alright)
+        if (_sharedContent.Health.GetLifeStatus() == LifeStatus.Alright || _sharedContent.Health.GetLifeStatus() == LifeStatus.FullHealth)
         {
             if (_sharedContent.Combat.IsEnemyDetected)
             {

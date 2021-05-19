@@ -9,10 +9,14 @@ public class SecondSkillButton : SkillButton, IPointerUpHandler, IPointerDownHan
 {
     public void OnPointerUp(PointerEventData eventData)
     {
-        EventAggregator.Post(this, new SecondSkillEvent() { Direction = _direction });
+        if (!CancleButton.IsCancle)
+        {
+            EventAggregator.Post(this, new SecondSkillEvent() { Direction = _direction });
+        }
         _inputManager.IsPlayerHoldingSecondSkillButton = false;
         _direction = Vector3.zero;
 
+        EventAggregator.Post(this, new OnActivateCancleButton { IsOn = false });
         SetBackgroundAndThumbleVisibility(false);
     }
 

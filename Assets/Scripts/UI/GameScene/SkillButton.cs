@@ -24,6 +24,8 @@ public class SkillButton : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
         _startThumblePosition = _thumble.transform.position;
 
         SetBackgroundAndThumbleVisibility(true);
+
+        EventAggregator.Post(this, new OnActivateCancleButton { IsOn = true });
     }
 
     public void OnDrag(PointerEventData eventData)

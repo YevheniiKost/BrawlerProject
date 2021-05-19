@@ -55,8 +55,10 @@ public class CharacterAnimation : MonoBehaviour, IStunComponent
         GetComponent<CharacterCombat>().SecondSkillWasUsed += UseSecondSkill;
 
         EventAggregator.Subscribe<CharacterDeath>(OnCharacterDeathHandler);
+        EventAggregator.Subscribe<CharacterWakeUp>(OnCharacterWakeUpHandler);
 
     }
+
 
     private void OnDestroy()
     {
@@ -75,9 +77,17 @@ public class CharacterAnimation : MonoBehaviour, IStunComponent
 
     private void OnCharacterDeathHandler(object character, CharacterDeath death)
     {
-        if (death.Character == GetComponent<CharacterHealth>())
+        if (death.Character == _health)
         {
             CharacterDeath();
+        }
+    }
+
+    private void OnCharacterWakeUpHandler(object arg1, CharacterWakeUp data)
+    {
+        if(data.Character == _health)
+        {
+            CharacterWakeUp();
         }
     }
 

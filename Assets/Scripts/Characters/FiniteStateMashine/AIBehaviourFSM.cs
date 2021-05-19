@@ -28,7 +28,7 @@ public class AIBehaviourFSM : MonoBehaviour
     }
     private void Update()
     {
-        _finiteStateMachine.Update();
+        _finiteStateMachine?.Update();
     }
 
     private void InitFSM()

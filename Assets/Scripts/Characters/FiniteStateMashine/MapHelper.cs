@@ -92,7 +92,7 @@ public class MapHelper : MonoBehaviour
         {
             if (me.Team == 0)
             {
-                var nearest = BlueTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position));
+                var nearest = BlueTeamCharactes.OrderBy(t => Vector3.Distance(me.transform.position, t.transform.position));
                 foreach (var near in nearest)
                 {
                     if (near.GetComponent<CharacterHealth>().GetLifeStatus() == LifeStatus.Dead)
@@ -104,7 +104,7 @@ public class MapHelper : MonoBehaviour
             }
             else if (me.Team == 1)
             {
-                var nearest = RedTeamCharactes.OrderBy(t => Vector2.Distance(me.transform.position, t.transform.position));
+                var nearest = RedTeamCharactes.OrderBy(t => Vector3.Distance(me.transform.position, t.transform.position));
                 foreach (var near in nearest)
                 {
                     if (near.GetComponent<CharacterHealth>().GetLifeStatus() == LifeStatus.Dead)
@@ -282,14 +282,51 @@ public class MapHelper : MonoBehaviour
             return false;
         }
     }
+
+    public bool IsSomeFriendlyCrystalsActive(CharacterIdentifier me)
+    {
+        if (me.Team == 1)
+        {
+            foreach (var crystalSpot in BlueCrystalsList)
+            {
+                if (crystalSpot.IsCrystalOn)
+                {
+                    return true;
+                }
+                else
+                    continue;
+            }
+            return false;
+        }
+        else if (me.Team == 0)
+        {
+            foreach (var crystalSpot in RedCrystalsList)
+            {
+                if (crystalSpot.IsCrystalOn)
+                {
+                    return true;
+                }
+                else
+                    continue;
+            }
+            return false;
+        }
+        else
+        {
+            Debug.LogError($"Character {me.name} identifier error");
+            return false;
+        }
+    }
     #endregion
 
     private void Awake()
     {
         ServiceLocator.Register(this);
+
+        EventAggregator.Subscribe<OnGameStart>(OnStartGameHandler);
     }
 
-    private void Start()
+    private void OnStartGameHandler(object arg1, OnGameStart arg2)
     {
         FillContainers();
     }

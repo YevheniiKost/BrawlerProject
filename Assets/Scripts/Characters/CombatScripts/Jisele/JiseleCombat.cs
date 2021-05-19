@@ -35,7 +35,18 @@ public class JiseleCombat : CharacterCombat
 
     public override void AttackBehavior()
     {
-        throw new System.NotImplementedException();
+        if (_secondAbilityCooldownTimer == 0)
+        {
+            UseSecondSkill();
+        }
+        else if (_firstAbilityCooldownTimer == 0)
+        {
+            UseFirstSkill();
+        }
+        else
+        {
+            AutoAttack();
+        }
     }
 
     #region Using of skills
@@ -72,6 +83,7 @@ public class JiseleCombat : CharacterCombat
 
             transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_firstSkillDirection.x, _firstSkillDirection.y) * Mathf.Rad2Deg, 0);
             OnFirstSkillUse();
+            FirstAbilityUsedEvent(_fireballCooldown);
             GetComponent<CharacterMovement>()?.ProcessForcedStop();
             _firstAbilityCooldownTimer = _fireballCooldown;
         }
@@ -95,6 +107,7 @@ public class JiseleCombat : CharacterCombat
             }
 
             OnSecondSkillUse();
+            SecondAvilityUsedEvent(_secondAbilityCooldown);
             GetComponent<CharacterMovement>()?.ProcessForcedStop();
             _secondAbilityCooldownTimer = _secondAbilityCooldown;
         }
@@ -158,7 +171,8 @@ public class JiseleCombat : CharacterCombat
 
     private void FirstSkillHit()
     {
-        _firstSkillDirection = new Vector3(_firstSkillDirection.x, 0, _firstSkillDirection.y);
+        _firstSkillDirection = new Vector3(_firstSkillDirection.x, 0, _firstSkillDirection.y).normalized;
+        Debug.Log(_firstSkillDirection);
         var fireBall = Instantiate(_fireballPrefab, _fireballStartPoint.position, Quaternion.identity);
         fireBall.SetData(_fireaballDamage, _fireballSpeed, _fireballFlyDistance, _firstSkillDirection, _charID);
         GetComponent<CharacterMovement>()?.UndoForcedStop();

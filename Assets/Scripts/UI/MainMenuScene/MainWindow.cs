@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
 public class MainWindow : MonoBehaviour, IWindow
 {
@@ -12,10 +11,10 @@ public class MainWindow : MonoBehaviour, IWindow
     [SerializeField] private Button _playButtonHeroButton;
     [SerializeField] private Button _backToMainMenuButton;
 
-    [SerializeField] private Image _gameModePanel;
-    [SerializeField] private Image _heroPanel;
-    [SerializeField] private Image _backPanel;
-    [SerializeField] private Image _playPanel;
+    [SerializeField] private Transform _gameModePanel;
+    [SerializeField] private Transform _heroPanel;
+    [SerializeField] private Transform _backPanel;
+    [SerializeField] private Transform _playPanel;
 
     [SerializeField] private float _closeWindowPanelsOffcet = 200f;
     [SerializeField] private float _openCloseTime = 2f;
@@ -26,10 +25,10 @@ public class MainWindow : MonoBehaviour, IWindow
     {
         if (_isOpened)
         {
-            _backPanel.transform.DOBlendableLocalMoveBy(new Vector3(_closeWindowPanelsOffcet, 0, 0), _openCloseTime).SetEase(Ease.InCubic);
-            _playPanel.transform.DOBlendableLocalMoveBy(new Vector3(_closeWindowPanelsOffcet, 0, 0), _openCloseTime).SetEase(Ease.InCubic);
-            _gameModePanel.transform.DOBlendableLocalMoveBy(new Vector3(-_closeWindowPanelsOffcet, 0, 0), _openCloseTime).SetEase(Ease.InCubic);
-            _heroPanel.transform.DOBlendableLocalMoveBy(new Vector3(-_closeWindowPanelsOffcet, 0, 0), _openCloseTime).SetEase(Ease.InCubic);
+            MyUtilities.UI.MoveRight(_backPanel, _closeWindowPanelsOffcet, _openCloseTime);
+            MyUtilities.UI.MoveRight(_playPanel, _closeWindowPanelsOffcet, _openCloseTime);
+            MyUtilities.UI.MoveLeft(_gameModePanel, _closeWindowPanelsOffcet, _openCloseTime);
+            MyUtilities.UI.MoveLeft(_heroPanel, _closeWindowPanelsOffcet, _openCloseTime);
             _isOpened = false;
         }
     }
@@ -38,10 +37,10 @@ public class MainWindow : MonoBehaviour, IWindow
     {
         if (!_isOpened)
         {
-            _backPanel.transform.DOBlendableLocalMoveBy(new Vector3(-_closeWindowPanelsOffcet, 0, 0), _openCloseTime).SetEase(Ease.InCubic);
-            _playPanel.transform.DOBlendableLocalMoveBy(new Vector3(-_closeWindowPanelsOffcet, 0, 0), _openCloseTime).SetEase(Ease.InCubic);
-            _gameModePanel.transform.DOBlendableLocalMoveBy(new Vector3(_closeWindowPanelsOffcet, 0, 0), _openCloseTime).SetEase(Ease.InCubic);
-            _heroPanel.transform.DOBlendableLocalMoveBy(new Vector3(_closeWindowPanelsOffcet, 0, 0), _openCloseTime).SetEase(Ease.InCubic);
+            MyUtilities.UI.MoveLeft(_backPanel.transform, _closeWindowPanelsOffcet, _openCloseTime);
+            MyUtilities.UI.MoveLeft(_playPanel.transform, _closeWindowPanelsOffcet, _openCloseTime);
+            MyUtilities.UI.MoveRight(_gameModePanel.transform, _closeWindowPanelsOffcet, _openCloseTime);
+            MyUtilities.UI.MoveRight(_heroPanel.transform, _closeWindowPanelsOffcet, _openCloseTime);
             _isOpened = true;
         }
     }

@@ -640,6 +640,7 @@ MonoBehaviour:
   _autoattackRadius: {fileID: 7515192334550778946}
   _firstSkillPointer: {fileID: 7384928706390289}
   _secondSkillPointer: {fileID: 3614036112922998677}
+  _skillsImages: []
 --- !u!1 &7159867632625058921
 GameObject:
   m_ObjectHideFlags: 0
@@ -5303,7 +5304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d2ee619483239145b117c9519a1539f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ControlledByKeyboard: 0
+  ControlledByKeyboard: 1
 --- !u!114 &7444136698098919058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5334,7 +5335,7 @@ MonoBehaviour:
   _autoAttackDamage: 30
   _autoAttackRange: 2
   _autoAttackRate: 1.5
-  EnemyDetectRadius: 13
+  EnemyDetectRadius: 12
   IsEnemyDetected: 0
   _shieldBashDamage: 80
   _shieldBashRadius: 0
@@ -5349,7 +5350,7 @@ MonoBehaviour:
   _shieldThrowDistance: 8
   _shieldThrowDamage: 150
   _shieldThrowStunDuration: 2
-  _shieldThrowCooldown: 12
+  _shieldThrowCooldown: 15
 --- !u!1 &7819808090302982710
 GameObject:
   m_ObjectHideFlags: 0

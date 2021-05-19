@@ -11,7 +11,7 @@ public class CrystalSearchState : BaseState<AISharedContent>
 
     public override void Execute()
     {
-        if (_sharedContent.Health.GetLifeStatus() == LifeStatus.Alright)
+        if (_sharedContent.Health.GetLifeStatus() == LifeStatus.Alright || _sharedContent.Health.GetLifeStatus() == LifeStatus.FullHealth)
         {
             if (!_sharedContent.Combat.IsEnemyDetected)
             {
@@ -19,13 +19,9 @@ public class CrystalSearchState : BaseState<AISharedContent>
                 {
                     _sharedContent.Movement.SetTarget(_sharedContent.MapHelper.LocateNearestActiveEnemyCrystal(_sharedContent.Identifier));
                 }
-                else if (!_sharedContent.MapHelper.IsSomeOfEnemiesCrystalsActive(_sharedContent.Identifier))
+                else if (_sharedContent.MapHelper.IsSomeFriendlyCrystalsActive(_sharedContent.Identifier))
                 {
                     _sharedContent.Movement.SetTarget(_sharedContent.MapHelper.LocateNearestActiveFriendlyCrystal(_sharedContent.Identifier));
-                }
-                else if (_sharedContent.MapHelper.LocateNearestActiveFriendlyCrystal(_sharedContent.Identifier) == null)
-                {
-                    _stateSwitcher.Switch(typeof(EnemySearchState));
                 }
                 else
                 {

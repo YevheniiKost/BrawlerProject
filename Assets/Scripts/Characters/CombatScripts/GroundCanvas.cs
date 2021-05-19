@@ -9,6 +9,8 @@ public class GroundCanvas : MonoBehaviour
     [SerializeField] protected Transform _firstSkillPointer;
     [SerializeField] protected Transform _secondSkillPointer;
 
+    [SerializeField] protected List<Image> _skillsImages = new List<Image>();
+
     protected PlayerInputManager _inputManager;
 
     protected Vector3 _firstSkillDirection = Vector3.zero;
@@ -19,10 +21,6 @@ public class GroundCanvas : MonoBehaviour
         _inputManager = ServiceLocator.Resolve<PlayerInputManager>();
     }
 
-    private void Update()
-    {
-       
-    }
 
     protected void AutoattackCircle()
     {
@@ -69,6 +67,10 @@ public class GroundCanvas : MonoBehaviour
                 _firstSkillPointer.transform.rotation = Quaternion.Euler(0, angle, 0);
 
             }
+            else
+            {
+                _firstSkillPointer.gameObject.SetActive(false);
+            }
         }
         else
         {
@@ -94,6 +96,24 @@ public class GroundCanvas : MonoBehaviour
         else
         {
             _secondSkillPointer.gameObject.SetActive(false);
+        }
+    }
+
+    protected void ChagePointersColor()
+    {
+        if (CancleButton.IsCancle)
+        {
+            for (int i = 0; i < _skillsImages.Count; i++)
+            {
+                _skillsImages[i].color = Color.red;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < _skillsImages.Count; i++)
+            {
+                _skillsImages[i].color = Color.white;
+            }
         }
     }
 }

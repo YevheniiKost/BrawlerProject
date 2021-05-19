@@ -42,6 +42,7 @@ public class CrystalSpot : MonoBehaviour
                 if(_friendlyCrystalGrabCooldown >= _timeToTakeFriendlyCrystal)
                 {
                     ImmediatlyGetCrystal();
+                    EventAggregator.Post(this, new OnGetPoint { CharacterTeam = SpotTeam });
                     _friendlyCrystalGrabCooldown = 0;
                 }
             }
@@ -74,14 +75,20 @@ public class CrystalSpot : MonoBehaviour
                 if (_crystalType == Team.Red)
                     StartCrystalGrabbingCountdown(player);
                 else if (_crystalType == Team.Blue)
+                {
                     ImmediatlyGetCrystal();
+                    EventAggregator.Post(this, new OnGetPoint { CharacterTeam = Team.Red });
+                }
             }
             else if (player.Team == 1)
             {
                 if (_crystalType == Team.Blue)
                     StartCrystalGrabbingCountdown(player);
                 else if (_crystalType == Team.Red)
+                {
                     ImmediatlyGetCrystal();
+                    EventAggregator.Post(this, new OnGetPoint { CharacterTeam = Team.Blue });
+                }
             }
             else
                 throw new Exception($"Player {player.name} team value issue");

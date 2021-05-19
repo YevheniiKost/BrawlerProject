@@ -8,4 +8,11 @@ public static class GameConstants
     {
         public static string Obstacle = "Obstacle";
     }
+
+    public static class Scenes
+    {
+        public static string StartMenu = "StartMenuScene";
+        public static string MainMenu = "MainMenuScene";
+        public static string TeamMatch = "TeamMatchScene";
+    }
 }

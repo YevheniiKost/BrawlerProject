@@ -104,8 +104,7 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _iD = GetComponent<CharacterIdentifier>();
-        if (_iD.IsControlledByThePlayer)
-            _input = GetComponent<CharacterPlayerInput>();
+        _input = GetComponent<CharacterPlayerInput>();
     }
 
     private void ProcessPlayerMovement()

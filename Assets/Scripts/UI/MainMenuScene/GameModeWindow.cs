@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
 public class GameModeWindow : MonoBehaviour, IWindow
 {
@@ -20,7 +19,7 @@ public class GameModeWindow : MonoBehaviour, IWindow
     {
         if (_isOpened)
         {
-            transform.DOBlendableLocalMoveBy(Vector3.right * _openCloseOffcet, _openCloseTime).SetEase(Ease.InCubic);
+            MyUtilities.UI.MoveRight(transform, _openCloseOffcet, _openCloseTime);
             _isOpened = false;
         }
     }
@@ -29,7 +28,7 @@ public class GameModeWindow : MonoBehaviour, IWindow
     {
         if (!_isOpened)
         {
-            transform.DOBlendableLocalMoveBy(Vector3.right * -_openCloseOffcet, _openCloseTime).SetEase(Ease.InCubic);
+            MyUtilities.UI.MoveLeft(transform, _openCloseOffcet, _openCloseTime);
             _isOpened = true;
         }
     }
