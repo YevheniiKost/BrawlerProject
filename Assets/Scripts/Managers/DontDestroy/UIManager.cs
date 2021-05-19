@@ -7,16 +7,31 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
+
+    //Start scene windows
+    public IWindow StartSceneWindow;
+    public IWindow StartSceneSettinsWindow;
+    public IWindow AboutAuthorWindow;
+
+    //Main menu scene windows
     public IWindow MainWindow;
     public IWindow GameModWindow;
     public IWindow SelectHeroWindow;
+
+    private ConfirmationWindow _confirmationWindow;
+
+    public void CreateConfirmationWindow(Action action, string messageText)
+    {
+        _confirmationWindow.OpenWindow();
+        _confirmationWindow.CreateMessageWindow(messageText, action);
+    }
 
     private void Awake()
     {
         DontDestroyOnLoad(this);
 
         if (Instance != null)
-            Destroy(this);
+            Destroy(this.gameObject);
         else
             Instance = this;
 
@@ -50,6 +65,18 @@ public class UIManager : MonoBehaviour
         }else if(obj.GetType() == typeof(SelectHeroWindow))
         {
             SelectHeroWindow = window.Window;
+        }else if(obj.GetType() == typeof(StartSceneWindow))
+        {
+            StartSceneWindow = window.Window;
+        } else if(obj.GetType() == typeof(StartSceneSettingsWindow))
+        {
+            StartSceneSettinsWindow = window.Window;
+        } else if(obj.GetType() == typeof(AboutAuthorWindow))
+        {
+            AboutAuthorWindow = window.Window;
+        }else if(obj.GetType () == typeof(ConfirmationWindow))
+        {
+            _confirmationWindow = window.Confirmation;
         }
         else
         {
@@ -57,6 +84,7 @@ public class UIManager : MonoBehaviour
         }
 
     }
+
 }
 
 public interface IWindow

@@ -18,36 +18,57 @@ public class GameManager : MonoBehaviour
 
     public TeamMatchSetup CurrentTeamMatchData;
 
+    private UIManager _uiManager;
+
     private void Awake()
     {
         DontDestroyOnLoad(this);
 
         if (Instance != null)
-            Destroy(this);
+            Destroy(this.gameObject);
         else
             Instance = this;
 
         ServiceLocator.Register(this);
 
-        EventAggregator.Subscribe<RequestForTeamMatchData>(GiveTeamMatchData);
-        EventAggregator.Subscribe<SelectAndSaveCurrentHero>(SelectAndSaveCurrentCharacter);
-        EventAggregator.Subscribe<OnPlayClick>(ProcessPlayClick);
+        SubscribeOnEvents();
 
         SelectedHero = PlayerPrefs.GetInt(SelectedHeroKey);
 
         LoadHeroes();
     }
-
+   
     private void Start()
     {
-        
         GenerateMatchData();
+        _uiManager = ServiceLocator.Resolve<UIManager>();
     }
 
+    #region Scene management
     private void ProcessPlayClick(object arg1, OnPlayClick arg2)
     {
         SceneManager.LoadScene(GameConstants.Scenes.TeamMatch);
     }
+
+    private void LoadMainMenuScene(object arg1, OnStartScenePlayClick arg2)
+    {
+        SceneManager.LoadScene(GameConstants.Scenes.MainMenu);
+    }
+
+    private void ReturnToMainMenu(object arg1, OnReturnToMainMenuClick arg2)
+    {
+        SceneManager.LoadScene(GameConstants.Scenes.StartMenu);
+    }
+
+    private void ExitGameHandler(object arg1, OnExitGameClickes arg2)
+    {
+        _uiManager.CreateConfirmationWindow(ExitGame, "Exit game?");
+    }
+    private void ExitGame()
+    {
+        Application.Quit();
+    }
+    #endregion
 
     #region Work with Match data
     private void GiveTeamMatchData(object arg1, RequestForTeamMatchData arg2)
@@ -142,6 +163,18 @@ public class GameManager : MonoBehaviour
     }
 
     #endregion
+
+    private void SubscribeOnEvents()
+    {
+        EventAggregator.Subscribe<RequestForTeamMatchData>(GiveTeamMatchData);
+        EventAggregator.Subscribe<SelectAndSaveCurrentHero>(SelectAndSaveCurrentCharacter);
+        EventAggregator.Subscribe<OnPlayClick>(ProcessPlayClick);
+        EventAggregator.Subscribe<OnStartScenePlayClick>(LoadMainMenuScene);
+        EventAggregator.Subscribe<OnExitGameClickes>(ExitGameHandler);
+        EventAggregator.Subscribe<OnReturnToMainMenuClick>(ReturnToMainMenu);
+    }
+
+   
 }
 
 public enum GameMode

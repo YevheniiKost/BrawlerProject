@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterCarousel : MonoBehaviour
+public class CharacterCarousel : MonoBehaviour, IHeroRotater
 {
     [SerializeField] private List<CharacterLite> _characters = new List<CharacterLite>();
+    [SerializeField] private float _heroRotationSpeed;
 
     public int IndexOfCurrentCharacter;
     private GameManager _gameManager;
@@ -74,4 +75,14 @@ public class CharacterCarousel : MonoBehaviour
             IndexOfCurrentCharacter = _characters.Count - 1;
         }
     }
+
+    public void RotateHero(float amount)
+    {
+        transform.rotation = Quaternion.Euler(Vector3.up * -amount);
+    }
+}
+
+public interface IHeroRotater
+{
+    void RotateHero(float amount);
 }

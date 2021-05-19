@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SelectHeroWindow : MonoBehaviour,IWindow
+public class SelectHeroWindow : MonoBehaviour, IWindow
 {
     [SerializeField] private TextMeshProUGUI _heroNameText;
     [SerializeField] private Button _rightArrowButton;
@@ -75,6 +75,16 @@ public class SelectHeroWindow : MonoBehaviour,IWindow
         EventAggregator.Subscribe<TransferCurrentCharacterData>(ChangeCharacterData);
     }
 
+    private void Start()
+    {
+        EventAggregator.Post(this, new SetWindow { Window = this });
+    }
+
+    private void HeroRoationHandler(float arg0)
+    {
+        throw new NotImplementedException();
+    }
+
     private void ChangeCharacterData(object arg1, TransferCurrentCharacterData data)
     {
         _firstSkillDescriptionText.text = data.Data.FirstSkillDescription.text;
@@ -102,8 +112,5 @@ public class SelectHeroWindow : MonoBehaviour,IWindow
         EventAggregator.Post(this, new OnRightArrowHeroSelectClick { });
     }
 
-    private void Start()
-    {
-        EventAggregator.Post(this, new SetWindow { Window = this });
-    }
+
 }

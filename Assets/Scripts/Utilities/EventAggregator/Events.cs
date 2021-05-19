@@ -31,20 +31,24 @@ public class AddHealthBar
 #endregion
 
 #region UI events
+// Start scene
+public class OnStartScenePlayClick { }
+public class OnExitGameClickes { }
 
+//Main menu scene
+public class OnPlayClick { }
 public class OnGameModClick { }
 public class OnSelectHeroClick { }
 public class OnReturnToMainMenuClick { }
-public class OnPlayClick { }
 public class OnLeftArrowHeroSelectClick { }
 public class OnRightArrowHeroSelectClick { }
 public class OnActivateCancleButton { public bool IsOn; }
 public class OnSelectHeroButtonClick { }
-public class SetWindow { public IWindow Window; }
+public class SetWindow { public IWindow Window; public ConfirmationWindow Confirmation; }
 
 #endregion
 
-#region Gamplay enetns
+#region Gamplay events
 public class RequestForTeamMatchData { }
 public class TakeTeamFightData { public TeamMatchSetup MatchData; }
 public class SelectAndSaveCurrentHero { public int HeroIndex; }
