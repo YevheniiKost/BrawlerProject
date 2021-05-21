@@ -44,8 +44,15 @@ public class ConfirmationWindow : MonoBehaviour, IWindow
 
     private void Start()
     {
-        EventAggregator.Post(this, new SetWindow { Confirmation = this });
+        EventAggregator.Post(this, new SetWindow { Window = this });
+        EventAggregator.Post(this, new SetConfirmationWindow { Window = this });
         CloseWindow();
+    }
+
+    private void OnDestroy()
+    {
+        EventAggregator.Post(this, new RemoveWindow { Window = this });
+        EventAggregator.Post(this, new RemoveConfirmationWindow { Window = this });
     }
 
     private void OnNoButtonClickHandler()

@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Shader Graphs_Fireball
+  m_Shader: {fileID: -6465566751694194690, guid: 0ce70e0c8c1e1b143ac03dba2d39181e,
+    type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - Texture2D_E2648FAC:
+        m_Texture: {fileID: 2800000, guid: a06e975c1edee4db2bb4db5c585733f1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - Vector1_1E710915: 4.86
+    - Vector1_2F3E6C5B: 35
+    - Vector1_500FF038: 7.67
+    - Vector1_53490EB9: 0
+    - Vector1_766A7E01: 1
+    - Vector1_A472391B: 3
+    - Vector1_B8AD4A6: 8.97
+    - Vector1_ED4113E3: 0
+    m_Colors:
+    - Color_8822DD76: {r: 64.53141, g: 55.026672, b: 2.1307554, a: 0}
+    - Color_ABEA8B2C: {r: 1, g: 1, b: 1, a: 0}
+    - Color_FF236466: {r: 333.8545, g: 284.91248, b: 17.479294, a: 0}
+    - Vector2_8533AE51: {r: 0.1, g: 0, b: 0, a: 0}
+    - Vector2_D95C2FFA: {r: -0.1, g: 0.1, b: 0, a: 0}

@@ -808,8 +808,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _aIBehaviuorComponent: {fileID: 7444136696852873422}
   _groundCanvas: {fileID: 329778910569277498}
-  Team: 1
-  IsControlledByThePlayer: 1
+  Team: 0
+  IsControlledByThePlayer: 0
   Name: 1
 --- !u!114 &7444136698098919063
 MonoBehaviour:
@@ -882,12 +882,12 @@ MonoBehaviour:
   _animEventHandler: {fileID: 3367600637055144823}
   _charID: {fileID: 7444136698098919057}
   _autoAttackDamage: 30
-  _autoAttackRange: 7
+  _autoAttackRange: 8
   _autoAttackRate: 1.5
   EnemyDetectRadius: 12
   IsEnemyDetected: 0
-  _autoattackFlyDistance: 3
-  _autoattackFlySpeed: 2.5
+  _autoattackFlyDistance: 6
+  _autoattackFlySpeed: 10
   _autoattackSphere: {fileID: 3401651306793321293, guid: 6d3303224db214c4298572063cc1f3ec,
     type: 3}
   _autoattackStartPosition: {fileID: 4003448864803235790}

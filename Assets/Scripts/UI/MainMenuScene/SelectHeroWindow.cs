@@ -79,11 +79,12 @@ public class SelectHeroWindow : MonoBehaviour, IWindow
     {
         EventAggregator.Post(this, new SetWindow { Window = this });
     }
-
-    private void HeroRoationHandler(float arg0)
+    private void OnDestroy()
     {
-        throw new NotImplementedException();
+        EventAggregator.Post(this, new RemoveWindow { Window = this });
+        EventAggregator.Unsubscribe<TransferCurrentCharacterData>(ChangeCharacterData);
     }
+
 
     private void ChangeCharacterData(object arg1, TransferCurrentCharacterData data)
     {
@@ -97,7 +98,7 @@ public class SelectHeroWindow : MonoBehaviour, IWindow
     private void OnSelectButtonClickHandler()
     {
         EventAggregator.Post(this, new OnSelectHeroButtonClick { });
-        ServiceLocator.Resolve<UIManager>().MainWindow.OpenWindow();
+        ServiceLocator.Resolve<UIManager>().OpenWindow(typeof(MainWindow));
         CloseWindow();
 
     }

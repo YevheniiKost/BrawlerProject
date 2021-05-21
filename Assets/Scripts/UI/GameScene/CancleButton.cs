@@ -16,6 +16,11 @@ public class CancleButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         EventAggregator.Subscribe<OnActivateCancleButton>(DisableImage);
     }
 
+    private void OnDestroy()
+    {
+        EventAggregator.Unsubscribe<OnActivateCancleButton>(DisableImage);
+    }
+
     private void DisableImage(object arg1, OnActivateCancleButton data)
     {
         GetComponent<Image>().enabled = data.IsOn;

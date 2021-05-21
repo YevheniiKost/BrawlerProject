@@ -71,21 +71,18 @@ public class JiseleCombat : CharacterCombat
             {
                 if (_target != null)
                 {
-                    var dirToTarget = _target.transform.position - transform.position;
-                    _firstSkillDirection = new Vector3(dirToTarget.x, dirToTarget.z, 0).normalized;
+                    _firstSkillDirection = (_target.transform.position - transform.position).normalized;
                     transform.LookAt(_target);
                 }
                 else
                 {
-                    _firstSkillDirection = Vector3.up;
+                    _firstSkillDirection = Vector3.forward;
                 }
             }
-
-            transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_firstSkillDirection.x, _firstSkillDirection.y) * Mathf.Rad2Deg, 0);
+            transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_firstSkillDirection.x, _firstSkillDirection.z) * Mathf.Rad2Deg, 0);
             OnFirstSkillUse();
-            FirstAbilityUsedEvent(_fireballCooldown);
             GetComponent<CharacterMovement>()?.ProcessForcedStop();
-            _firstAbilityCooldownTimer = _fireballCooldown;
+           
         }
     }
 
@@ -105,11 +102,8 @@ public class JiseleCombat : CharacterCombat
                 var direction = new Vector3(_secondSkillDirection.x, 0, _secondSkillDirection.y);
                 _secondSkillDirection = direction * _secondAbilityRadius;
             }
-
             OnSecondSkillUse();
-            SecondAvilityUsedEvent(_secondAbilityCooldown);
             GetComponent<CharacterMovement>()?.ProcessForcedStop();
-            _secondAbilityCooldownTimer = _secondAbilityCooldown;
         }
     }
 
@@ -131,6 +125,10 @@ public class JiseleCombat : CharacterCombat
         _animEventHandler.OnAutoattackHit -= AutoAttackHit;
         _animEventHandler.OnFirstSkillHit -= FirstSkillHit;
         _animEventHandler.OnSecondSkillHit -= SecondSkillHit;
+
+        EventAggregator.Unsubscribe<AutoattackEvent>(AutoAttackHandler);
+        EventAggregator.Unsubscribe<FirstSkillEvent>(FirstSkillInputHandler);
+        EventAggregator.Unsubscribe<SecondSkillEvent>(SecondSkillInputHandler);
     }
 
     private void Update()
@@ -165,16 +163,16 @@ public class JiseleCombat : CharacterCombat
 
             _autoattackDirection = _target.transform.position - ball.transform.position;
             _autoattackDirection.y = 0;
-            ball.SetData(_autoattackDirection, _autoAttackDamage, _charID, _autoattackFlySpeed, _autoattackFlyDistance);
+            ball.SetData(_autoattackDirection.normalized, _autoAttackDamage, _charID, _autoattackFlySpeed, _autoattackFlyDistance);
         }
     }
 
     private void FirstSkillHit()
     {
-        _firstSkillDirection = new Vector3(_firstSkillDirection.x, 0, _firstSkillDirection.y).normalized;
-        Debug.Log(_firstSkillDirection);
         var fireBall = Instantiate(_fireballPrefab, _fireballStartPoint.position, Quaternion.identity);
         fireBall.SetData(_fireaballDamage, _fireballSpeed, _fireballFlyDistance, _firstSkillDirection, _charID);
+        FirstAbilityUsedEvent(_fireballCooldown);
+        _firstAbilityCooldownTimer = _fireballCooldown;
         GetComponent<CharacterMovement>()?.UndoForcedStop();
     }
 
@@ -182,6 +180,8 @@ public class JiseleCombat : CharacterCombat
     {
         var meteor = Instantiate(_meteorPrefab, transform.position + _secondSkillDirection, Quaternion.identity);
         meteor.GetData(_meteorExplosionDamage, _fireAreaDamage, _meteorExplosionRadius, _fireAreaDamageRate, _fireAreaDamageRate, _fireAreaLifeTime, _charID);
+        SecondAvilityUsedEvent(_secondAbilityCooldown);
+        _secondAbilityCooldownTimer = _secondAbilityCooldown;
         GetComponent<CharacterMovement>()?.UndoForcedStop();
     }
 
@@ -196,7 +196,7 @@ public class JiseleCombat : CharacterCombat
     {
         if (_charID.IsControlledByThePlayer)
         {
-            _firstSkillDirection = skill.Direction;
+            _firstSkillDirection = new Vector3(skill.Direction.x, 0, skill.Direction.y);
             UseFirstSkill();
         }
     }

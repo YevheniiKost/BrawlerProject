@@ -11,6 +11,8 @@ public class GamePlayManager : MonoBehaviour
 
     [Header("Game stats")]
     [SerializeField] private float _characterDeathTimer;
+    [SerializeField] private float _timerBeforeStartGame;
+    [SerializeField] private float _additionalTime;
 
     public TeamMatchSetup MatchData;
     public List<Transform> RedSpawnPoints = new List<Transform>();
@@ -29,31 +31,68 @@ public class GamePlayManager : MonoBehaviour
         _gameTimer = FindObjectOfType<UpperPanelInGame>();
         EventAggregator.Subscribe<OnGetPoint>(OnGetPointHandler);
         EventAggregator.Subscribe<CharacterDeath>(OnCharacterDeathHadler);
+        EventAggregator.Subscribe<OnStartGame>(StartAcluallyGame);
     }
 
     private void Start()
     {
-       
-        StartGame();
+        StartGameScene();
         EventAggregator.Post(this, new TransferCurrentCharacterData { Data = _gameManager.ListOfHeroes[_gameManager.SelectedHero] });
     }
 
     private void Update()
     {
-        _matchTimer -= Time.deltaTime;
+        if (_matchTimer > 0)
+            _matchTimer -= Time.deltaTime;
+        else if(_matchTimer <= 0)
+        {
+            EndGameHandler();
+        }
         _gameTimer.UpdateTimer(_matchTimer);
     }
 
-    private void StartGame()
+  
+
+    private void OnDestroy()
+    {
+        EventAggregator.Unsubscribe<OnGetPoint>(OnGetPointHandler);
+        EventAggregator.Unsubscribe<CharacterDeath>(OnCharacterDeathHadler);
+        EventAggregator.Unsubscribe<OnStartGame>(StartAcluallyGame);
+    }
+
+    private void StartGameScene()
     {
         FillRedTeam();
         FillBlueTeam();
         _redTeamPoints = 0;
         _blueTeamPoints = 0;
-        _matchTimer = MatchData.BattleDuration;
-
+        _matchTimer = 0;
         UpdateCrystalCount();
-        EventAggregator.Post(this, new OnGameStart { });
+        EventAggregator.Post(this, new OnStartGameScene { GameStartTime = _timerBeforeStartGame }) ;
+    }
+
+    private void EndGameHandler()
+    {
+        Team winner;
+        if(_redTeamPoints > _blueTeamPoints)
+        {
+            winner = Team.Red;
+            EventAggregator.Post(this, new OnEndGame { Winner = winner });
+        } else if( _blueTeamPoints > _redTeamPoints)
+        {
+            winner = Team.Blue;
+            EventAggregator.Post(this, new OnEndGame { Winner = winner });
+        }
+        else
+        {
+            _matchTimer += _additionalTime;
+        }
+        
+    }
+
+    private void StartAcluallyGame(object arg1, OnStartGame arg2)
+    {
+        _matchTimer = MatchData.BattleDuration;
     }
 
 

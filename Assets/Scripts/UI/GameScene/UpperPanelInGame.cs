@@ -22,6 +22,17 @@ public class UpperPanelInGame : MonoBehaviour, IGameTimer
     private void Awake()
     {
         EventAggregator.Subscribe<UpdateCrystalCounter>(UpdatePointsHandler);
+        _pauseButton.onClick.AddListener(OnPauseButtonClickHandler);
+    }
+
+    private void OnPauseButtonClickHandler()
+    {
+        EventAggregator.Post(this, new OnGamePaused { });
+    }
+
+    private void OnDestroy()
+    {
+        EventAggregator.Unsubscribe<UpdateCrystalCounter>(UpdatePointsHandler);
     }
 
     private void UpdatePointsHandler(object arg1, UpdateCrystalCounter data)

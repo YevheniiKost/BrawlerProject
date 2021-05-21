@@ -21,6 +21,12 @@ public class RightSideInputPanelUI : MonoBehaviour
         EventAggregator.Subscribe<FirstAbilityWasUsed>(CreateCDTimerFirstSkill);
         EventAggregator.Subscribe<SecondAbilityWasUsed>(CreateCDTimerSecondSkill);
     }
+    private void OnDestroy()
+    {
+        EventAggregator.Unsubscribe<TransferCurrentCharacterData>(InsertAbilityImages);
+        EventAggregator.Unsubscribe<FirstAbilityWasUsed>(CreateCDTimerFirstSkill);
+        EventAggregator.Unsubscribe<SecondAbilityWasUsed>(CreateCDTimerSecondSkill);
+    }
 
     private void CreateCDTimerSecondSkill(object arg1, SecondAbilityWasUsed data) => _secondSkillCD.CreateColldown(data.Cooldown);
 

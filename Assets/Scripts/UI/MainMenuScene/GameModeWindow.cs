@@ -46,10 +46,15 @@ public class GameModeWindow : MonoBehaviour, IWindow
         EventAggregator.Post(this, new SetWindow { Window = this });
     }
 
+    private void OnDestroy()
+    {
+        EventAggregator.Post(this, new RemoveWindow { Window = this });
+    }
+
     private void OnCloseButtonClickHandler()
     {
         CloseWindow();
-        ServiceLocator.Resolve<UIManager>().MainWindow.OpenWindow();
+        ServiceLocator.Resolve<UIManager>().OpenWindow(typeof(MainWindow));
     }
 
     private void OnDeathMatchClickHandler()

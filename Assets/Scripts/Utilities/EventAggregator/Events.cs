@@ -44,7 +44,17 @@ public class OnLeftArrowHeroSelectClick { }
 public class OnRightArrowHeroSelectClick { }
 public class OnActivateCancleButton { public bool IsOn; }
 public class OnSelectHeroButtonClick { }
-public class SetWindow { public IWindow Window; public ConfirmationWindow Confirmation; }
+public class SetWindow { public IWindow Window; }
+public class RemoveWindow { public IWindow Window;  }
+public class SetConfirmationWindow { public ConfirmationWindow Window; }
+public class RemoveConfirmationWindow { public ConfirmationWindow Window; }
+
+// Team fight Scene
+public class OnRestartTeamFirght { }
+public class OnGamePaused { }
+public class OnGameUnpased { }
+public class OnStartGame { }
+public class OnEndGame { public Team Winner; }
 
 #endregion
 
@@ -55,7 +65,7 @@ public class SelectAndSaveCurrentHero { public int HeroIndex; }
 public class TransferCurrentCharacterData { public HeroSelecterData Data; }
 public class FirstAbilityWasUsed { public float Cooldown; }
 public class SecondAbilityWasUsed { public float Cooldown; }
-public class OnGameStart { }
+public class OnStartGameScene { public float GameStartTime; }
 public class OnGetPoint { public Team CharacterTeam; }
 public class UpdateCrystalCounter { public Team CurrentTeam; public int CurrentCrystalCount; }
 #endregion

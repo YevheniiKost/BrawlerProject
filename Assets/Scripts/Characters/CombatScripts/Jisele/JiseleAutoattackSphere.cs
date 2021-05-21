@@ -20,7 +20,7 @@ public class JiseleAutoattackSphere : MonoBehaviour
         _speed = speed;
         _distance = distance;
 
-        _lifeTime = _distance / _speed;
+        _lifeTime = _speed /_distance;
     }
 
     private void OnTriggerEnter(Collider other)

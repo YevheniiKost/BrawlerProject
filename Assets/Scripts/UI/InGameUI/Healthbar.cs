@@ -31,7 +31,8 @@ public class Healthbar : MonoBehaviour
 
     private void OnDestroy()
     {
-        StopCoroutine(_currentcoroutine);
+        if (_currentcoroutine != null)
+            StopCoroutine(_currentcoroutine);
         _health.OnHealthPctChange -= HandleHealthChange;
     }
 

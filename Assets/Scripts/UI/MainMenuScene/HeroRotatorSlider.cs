@@ -24,7 +24,6 @@ public class HeroRotatorSlider : MonoBehaviour, IPointerDownHandler, IPointerUpH
     {
         _slider.value = _startValue;
     }
-
     private void Update()
     {
         if (!_isPlayerHoldingSlider)

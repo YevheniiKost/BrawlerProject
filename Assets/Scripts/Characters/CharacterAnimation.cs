@@ -65,6 +65,9 @@ public class CharacterAnimation : MonoBehaviour, IStunComponent
         GetComponent<CharacterCombat>().AutoAttackWasUsed -= UseAutoattack;
         GetComponent<CharacterCombat>().FirstSkillWasUsed -= UseFirstSkill;
         GetComponent<CharacterCombat>().SecondSkillWasUsed -= UseSecondSkill;
+
+        EventAggregator.Unsubscribe<CharacterDeath>(OnCharacterDeathHandler);
+        EventAggregator.Unsubscribe<CharacterWakeUp>(OnCharacterWakeUpHandler);
     }
 
     private void Update()

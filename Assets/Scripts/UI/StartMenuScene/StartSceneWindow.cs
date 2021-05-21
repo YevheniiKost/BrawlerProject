@@ -39,6 +39,11 @@ public class StartSceneWindow : MonoBehaviour, IWindow
         _uiManager = ServiceLocator.Resolve<UIManager>();
     }
 
+    private void OnDestroy()
+    {
+        EventAggregator.Post(this, new RemoveWindow { Window = this });
+    }
+
     private void OnPlayButtonClickHandler()
     {
         EventAggregator.Post(this, new OnStartScenePlayClick { });
@@ -46,12 +51,12 @@ public class StartSceneWindow : MonoBehaviour, IWindow
 
     private void OnSettingsButtonClickHandler()
     {
-        _uiManager.StartSceneSettinsWindow.OpenWindow();
+        _uiManager.OpenWindow(typeof(SettingsWindow));
     }
 
     private void OnAuthorButtonClickHandler()
     {
-        _uiManager.AboutAuthorWindow.OpenWindow();
+        _uiManager.OpenWindow(typeof(AboutAuthorWindow));
     }
 
     private void OnExitButtonClickHandler()

@@ -18,6 +18,13 @@ public class CharacterCarousel : MonoBehaviour, IHeroRotater
         EventAggregator.Subscribe<OnSelectHeroButtonClick>(SelectCurrenHero);
     }
 
+    private void OnDestroy()
+    {
+        EventAggregator.Unsubscribe<OnLeftArrowHeroSelectClick>(LeftArrowClickHandler);
+        EventAggregator.Unsubscribe<OnRightArrowHeroSelectClick>(RightArrowClickHandler);
+        EventAggregator.Unsubscribe<OnSelectHeroButtonClick>(SelectCurrenHero);
+    }
+
     private void Start()
     {
         _gameManager = ServiceLocator.Resolve<GameManager>();

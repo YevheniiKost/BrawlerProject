@@ -121,6 +121,10 @@ public class BeorCombat : CharacterCombat
         _animEventHandler.OnAutoattackHit -= AutoAttackHit;
         _animEventHandler.OnFirstSkillHit -= FirstSkillHit;
         _animEventHandler.OnSecondSkillHit -= SecondSkillHit;
+
+        EventAggregator.Unsubscribe<AutoattackEvent>(AutoAttackHandler);
+        EventAggregator.Unsubscribe<FirstSkillEvent>(FirstSkillInputHandler);
+        EventAggregator.Unsubscribe<SecondSkillEvent>(SecondSkillInputHandler);
     }
 
     private void Update()
@@ -185,7 +189,7 @@ public class BeorCombat : CharacterCombat
    private void SecondSkillHit()
     {
         var shield = Instantiate(_shieldPrefab, _shieldStartPoint.position + Vector3.down * .5f, Quaternion.identity);
-        shield.GetData(_shieldThrowDamage, _shieldThrowSpeed, _shieldThrowDistance, new Vector3(_secondSkillDirection.x, 0, _secondSkillDirection.y), _charID, _shieldThrowStunDuration);
+        shield.GetData(_shieldThrowDamage, _shieldThrowSpeed, _shieldThrowDistance, new Vector3(_secondSkillDirection.x, 0, _secondSkillDirection.y).normalized, _charID, _shieldThrowStunDuration);
         GetComponent<CharacterMovement>()?.UndoForcedStop();
     }
 

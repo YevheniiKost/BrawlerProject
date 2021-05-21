@@ -11,8 +11,19 @@ public class AboutAuthorWindow : MonoBehaviour, IWindow
     private void Awake()
     {
         _closeButton.onClick.AddListener(OnCloseButtonClickHandler);
+
     }
 
+    private void Start()
+    {
+        EventAggregator.Post(this, new SetWindow { Window = this });
+        CloseWindow();
+    }
+
+    private void OnDestroy()
+    {
+        EventAggregator.Post(this, new RemoveWindow { Window = this });
+    }
     private void OnCloseButtonClickHandler()
     {
         CloseWindow();
@@ -28,9 +39,5 @@ public class AboutAuthorWindow : MonoBehaviour, IWindow
         gameObject.SetActive(true);
     }
 
-    private void Start()
-    {
-        EventAggregator.Post(this, new SetWindow { Window = this });
-        CloseWindow();
-    }
+ 
 }

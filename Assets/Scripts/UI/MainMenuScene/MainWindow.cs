@@ -60,6 +60,11 @@ public class MainWindow : MonoBehaviour, IWindow
         EventAggregator.Post(this, new SetWindow { Window = this });
     }
 
+    private void OnDestroy()
+    {
+        EventAggregator.Post(this, new RemoveWindow { Window = this });
+    }
+
 
     private void OnGameModeButtonClickHandler()
     {

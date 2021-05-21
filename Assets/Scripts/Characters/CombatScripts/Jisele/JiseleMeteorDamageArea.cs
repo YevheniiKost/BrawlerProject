@@ -52,5 +52,7 @@ public class JiseleMeteorDamageArea : MonoBehaviour
             lifeTime -= rate;
             yield return new WaitForSeconds(rate);
         }
+
+      Destroy(GetComponentInParent<JiseleMeteor>().gameObject);
     }
 }

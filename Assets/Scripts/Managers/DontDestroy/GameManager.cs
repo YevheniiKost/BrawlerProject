@@ -8,6 +8,8 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    [SerializeField] private float _teamMatchDuration;
+    [SerializeField, Range(1, 3)] private int _numberOfHeroesInTeam;
 
     public int SelectedHero;
     private readonly string SelectedHeroKey = "SelecterHero";
@@ -37,7 +39,12 @@ public class GameManager : MonoBehaviour
 
         LoadHeroes();
     }
-   
+
+    private void OnDestroy()
+    {
+        UnsubscribeOnEvents();
+    }
+
     private void Start()
     {
         GenerateMatchData();
@@ -45,29 +52,35 @@ public class GameManager : MonoBehaviour
     }
 
     #region Scene management
-    private void ProcessPlayClick(object arg1, OnPlayClick arg2)
-    {
-        SceneManager.LoadScene(GameConstants.Scenes.TeamMatch);
-    }
-
-    private void LoadMainMenuScene(object arg1, OnStartScenePlayClick arg2)
-    {
-        SceneManager.LoadScene(GameConstants.Scenes.MainMenu);
-    }
-
+    private void ProcessPlayClick(object arg1, OnPlayClick arg2) => SceneManager.LoadScene(GameConstants.Scenes.TeamMatch);
+    private void LoadMainMenuScene(object arg1, OnStartScenePlayClick arg2) => SceneManager.LoadScene(GameConstants.Scenes.MainMenu);
     private void ReturnToMainMenu(object arg1, OnReturnToMainMenuClick arg2)
     {
+        if (_uiManager.Windows.ContainsKey(typeof(ConfirmationWindow)))
+            _uiManager.CreateConfirmationWindow(Return, " ");
+        else
+            Return();
+
+    }
+    private void Return()
+    {
+        UnpauseGame();
         SceneManager.LoadScene(GameConstants.Scenes.StartMenu);
     }
+    private void ExitGameHandler(object arg1, OnExitGameClickes arg2) => _uiManager.CreateConfirmationWindow(ExitGame, "Exit game?");
+    private void ExitGame() => Application.Quit();
+    private void PauseGameHandler(object arg1, OnGamePaused arg2) => PauseGame();
+    private void UnpauseGameHandler(object arg1, OnGameUnpased arg2) => UnpauseGame();
+    private void RestartTeamFightHandler(object arg1, OnRestartTeamFirght arg2) => _uiManager.CreateConfirmationWindow(RestartTeamFigth, " ");
+    private void RestartTeamFigth()
+    {
+        UnpauseGame();
+        SceneManager.LoadScene(GameConstants.Scenes.TeamMatch);
+    }
+    private void EndGameHandler(object arg1, OnEndGame arg2) => PauseGame();
+    private void PauseGame() => Time.timeScale = 0;
+    private void UnpauseGame() => Time.timeScale = 1;
 
-    private void ExitGameHandler(object arg1, OnExitGameClickes arg2)
-    {
-        _uiManager.CreateConfirmationWindow(ExitGame, "Exit game?");
-    }
-    private void ExitGame()
-    {
-        Application.Quit();
-    }
     #endregion
 
     #region Work with Match data
@@ -83,14 +96,14 @@ public class GameManager : MonoBehaviour
     }
     private void GenerateMatchData()
     {
-        int numerInTeam = 3;
+        int numerInTeam = _numberOfHeroesInTeam;
         var list = new List<CharacterName>(ListOfRandomCharacters(numerInTeam * 2));
         var blueList = new List<CharacterName>(list);
         blueList.RemoveRange(numerInTeam, numerInTeam);
         var redList = new List<CharacterName>(list);
         redList.RemoveRange(0, numerInTeam);
         blueList[0] = ListOfHeroes[SelectedHero].Name;
-        var data = new TeamMatchSetup(redList, blueList, blueList[0], 180, numerInTeam);
+        var data = new TeamMatchSetup(redList, blueList, blueList[0], _teamMatchDuration, numerInTeam);
         CurrentTeamMatchData = data;
     }
     private List<CharacterName> ListOfRandomCharacters(int lenght)
@@ -147,7 +160,7 @@ public class GameManager : MonoBehaviour
     {
         ListOfHeroes.Add(LoadHero(CharacterName.Beor));
         ListOfHeroes.Add(LoadHero(CharacterName.Jisele));
-    } 
+    }
 
     private HeroSelecterData LoadHero(CharacterName name)
     {
@@ -172,9 +185,28 @@ public class GameManager : MonoBehaviour
         EventAggregator.Subscribe<OnStartScenePlayClick>(LoadMainMenuScene);
         EventAggregator.Subscribe<OnExitGameClickes>(ExitGameHandler);
         EventAggregator.Subscribe<OnReturnToMainMenuClick>(ReturnToMainMenu);
+        EventAggregator.Subscribe<OnRestartTeamFirght>(RestartTeamFightHandler);
+        EventAggregator.Subscribe<OnGamePaused>(PauseGameHandler);
+        EventAggregator.Subscribe<OnGameUnpased>(UnpauseGameHandler);
+        EventAggregator.Subscribe<OnEndGame>(EndGameHandler);
     }
 
-   
+
+    private void UnsubscribeOnEvents()
+    {
+        EventAggregator.Unsubscribe<RequestForTeamMatchData>(GiveTeamMatchData);
+        EventAggregator.Unsubscribe<SelectAndSaveCurrentHero>(SelectAndSaveCurrentCharacter);
+        EventAggregator.Unsubscribe<OnPlayClick>(ProcessPlayClick);
+        EventAggregator.Unsubscribe<OnStartScenePlayClick>(LoadMainMenuScene);
+        EventAggregator.Unsubscribe<OnExitGameClickes>(ExitGameHandler);
+        EventAggregator.Unsubscribe<OnReturnToMainMenuClick>(ReturnToMainMenu);
+        EventAggregator.Unsubscribe<OnRestartTeamFirght>(RestartTeamFightHandler);
+        EventAggregator.Unsubscribe<OnGamePaused>(PauseGameHandler);
+        EventAggregator.Unsubscribe<OnGameUnpased>(UnpauseGameHandler);
+        EventAggregator.Unsubscribe<OnEndGame>(EndGameHandler);
+    }
+
+    
 }
 
 public enum GameMode

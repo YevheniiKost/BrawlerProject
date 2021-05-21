@@ -8,6 +8,7 @@ public class InGameUIManager : MonoBehaviour
     [SerializeField] private Canvas _inGameCanvas;
     [SerializeField] private Healthbar _healthBarPrefab;
     [SerializeField] private DamagePopup _damagePopupPrefab;
+    [SerializeField] private KillerPresenter _killerPresenter;
 
     private Dictionary<CharacterHealth, Healthbar> _healthBars = new Dictionary<CharacterHealth, Healthbar>();
 
@@ -17,11 +18,21 @@ public class InGameUIManager : MonoBehaviour
         EventAggregator.Subscribe<AddHealthBar>(CreateHealthBar);
         EventAggregator.Subscribe<CharacterDeath>(RemoveHealthBar);
         EventAggregator.Subscribe<CharacterHit>(CreateDamagePopup);
+        EventAggregator.Subscribe<CharacterDeath>(CreateKillerPresenterPopUp);
     }
 
     private void OnDestroy()
     {
         ServiceLocator.Unregister(this);
+        EventAggregator.Unsubscribe<AddHealthBar>(CreateHealthBar);
+        EventAggregator.Unsubscribe<CharacterDeath>(RemoveHealthBar);
+        EventAggregator.Unsubscribe<CharacterHit>(CreateDamagePopup);
+        EventAggregator.Unsubscribe<CharacterDeath>(CreateKillerPresenterPopUp);
+    }
+
+    private void CreateKillerPresenterPopUp(object arg1, CharacterDeath data)
+    {
+        _killerPresenter.CreateTextPopup(data.Character.GetComponent<CharacterIdentifier>().Name.ToString(), data.Killer.Name.ToString());
     }
 
     private void CreateDamagePopup(object arg1, CharacterHit data)

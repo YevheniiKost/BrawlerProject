@@ -322,18 +322,26 @@ public class MapHelper : MonoBehaviour
     private void Awake()
     {
         ServiceLocator.Register(this);
-
-        EventAggregator.Subscribe<OnGameStart>(OnStartGameHandler);
+        EventAggregator.Subscribe<OnStartGameScene>(OnStartGameHandler);
+        EventAggregator.Subscribe<OnStartGame>(OnStartActuallyGameHandler);
     }
 
-    private void OnStartGameHandler(object arg1, OnGameStart arg2)
+    
+    private void OnStartGameHandler(object arg1, OnStartGameScene arg2)
     {
         FillContainers();
+        StopAllCharacters();
+    }
+    private void OnStartActuallyGameHandler(object arg1, OnStartGame arg2)
+    {
+        ReleaseAllCharacters();
     }
 
     private void OnDestroy()
     {
         ServiceLocator.Unregister(this);
+        EventAggregator.Unsubscribe<OnStartGameScene>(OnStartGameHandler);
+        EventAggregator.Unsubscribe<OnStartGame>(OnStartActuallyGameHandler);
     }
 
     private void FillContainers()
@@ -374,5 +382,28 @@ public class MapHelper : MonoBehaviour
         }
     }
 
+    private void StopAllCharacters()
+    {
+        foreach (var hero in RedTeamCharactes)
+        {
+            hero.GetComponent<CharacterMovement>().ProcessForcedStop();
+        }
+        foreach (var hero in BlueTeamCharactes)
+        {
+            hero.GetComponent<CharacterMovement>().ProcessForcedStop();
+        }
+    }
+
+    private void ReleaseAllCharacters()
+    {
+        foreach (var hero in RedTeamCharactes)
+        {
+            hero.GetComponent<CharacterMovement>().UndoForcedStop();
+        }
+        foreach (var hero in BlueTeamCharactes)
+        {
+            hero.GetComponent<CharacterMovement>().UndoForcedStop();
+        }
+    }
 
 }
