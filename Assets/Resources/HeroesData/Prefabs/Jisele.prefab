@@ -839,7 +839,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3975856868595748979cc2c907fd722, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _initialHealh: 1000
+  _initialHealh: 800
   PercentOfHealthToStartRetreat: 30
 --- !u!114 &7444136698098919062
 MonoBehaviour:
@@ -903,7 +903,7 @@ MonoBehaviour:
   _meteorExplosionDamage: 200
   _meteorExplosionRadius: 2
   _fireAreaDamage: 30
-  _fireAreaDamageRate: 1
+  _fireAreaDamageRate: 2
   _fireAreaRadius: 3
   _fireAreaLifeTime: 4
   _meteorPrefab: {fileID: 2646742563630208145, guid: 2ac4c89cb75589c4494cdded95e92a56,

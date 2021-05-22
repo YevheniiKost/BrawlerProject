@@ -57,14 +57,20 @@ public class GameManager : MonoBehaviour
     private void ReturnToMainMenu(object arg1, OnReturnToMainMenuClick arg2)
     {
         if (_uiManager.Windows.ContainsKey(typeof(ConfirmationWindow)))
+        {
+            UnpauseGame();
             _uiManager.CreateConfirmationWindow(Return, " ");
+        }
         else
+        {
+            UnpauseGame();
             Return();
+        }
+            
 
     }
     private void Return()
     {
-        UnpauseGame();
         SceneManager.LoadScene(GameConstants.Scenes.StartMenu);
     }
     private void ExitGameHandler(object arg1, OnExitGameClickes arg2) => _uiManager.CreateConfirmationWindow(ExitGame, "Exit game?");
@@ -160,6 +166,7 @@ public class GameManager : MonoBehaviour
     {
         ListOfHeroes.Add(LoadHero(CharacterName.Beor));
         ListOfHeroes.Add(LoadHero(CharacterName.Jisele));
+        ListOfHeroes.Add(LoadHero(CharacterName.Mork));
     }
 
     private HeroSelecterData LoadHero(CharacterName name)

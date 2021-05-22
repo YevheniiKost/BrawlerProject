@@ -10,6 +10,7 @@ public class JiseleMeteor : MonoBehaviour
     [SerializeField] private Transform _base;
     [SerializeField] private float _meteorSpeed;
     [SerializeField] private Vector3 _meteorStartPosition;
+    [SerializeField] private ParticleSystem _explosion;
 
     private int _meteorExplodeDamage;
     private float _meteorExplodeRadius;
@@ -45,6 +46,7 @@ public class JiseleMeteor : MonoBehaviour
     private void Explosion()
     {
         Destroy(_meteor.gameObject);
+        _explosion.Play();
         var col = Physics.OverlapSphere(transform.position, _meteorExplodeRadius);
         for (int i = 0; i < col.Length; i++)
         {

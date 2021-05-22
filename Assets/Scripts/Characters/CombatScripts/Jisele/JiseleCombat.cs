@@ -81,6 +81,8 @@ public class JiseleCombat : CharacterCombat
             }
             transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_firstSkillDirection.x, _firstSkillDirection.z) * Mathf.Rad2Deg, 0);
             OnFirstSkillUse();
+            FirstAbilityUsedEvent(_fireballCooldown);
+            _firstAbilityCooldownTimer = _fireballCooldown;
             GetComponent<CharacterMovement>()?.ProcessForcedStop();
            
         }
@@ -96,6 +98,10 @@ public class JiseleCombat : CharacterCombat
                 {
                     _secondSkillDirection = _target.transform.position - transform.position;
                 }
+                else
+                {
+                    _secondSkillDirection = Vector3.forward ;
+                }
             }
             else
             {
@@ -103,6 +109,8 @@ public class JiseleCombat : CharacterCombat
                 _secondSkillDirection = direction * _secondAbilityRadius;
             }
             OnSecondSkillUse();
+            SecondAvilityUsedEvent(_secondAbilityCooldown);
+            _secondAbilityCooldownTimer = _secondAbilityCooldown;
             GetComponent<CharacterMovement>()?.ProcessForcedStop();
         }
     }
@@ -171,8 +179,7 @@ public class JiseleCombat : CharacterCombat
     {
         var fireBall = Instantiate(_fireballPrefab, _fireballStartPoint.position, Quaternion.identity);
         fireBall.SetData(_fireaballDamage, _fireballSpeed, _fireballFlyDistance, _firstSkillDirection, _charID);
-        FirstAbilityUsedEvent(_fireballCooldown);
-        _firstAbilityCooldownTimer = _fireballCooldown;
+        _firstSkillDirection = Vector3.zero;
         GetComponent<CharacterMovement>()?.UndoForcedStop();
     }
 
@@ -180,8 +187,8 @@ public class JiseleCombat : CharacterCombat
     {
         var meteor = Instantiate(_meteorPrefab, transform.position + _secondSkillDirection, Quaternion.identity);
         meteor.GetData(_meteorExplosionDamage, _fireAreaDamage, _meteorExplosionRadius, _fireAreaDamageRate, _fireAreaDamageRate, _fireAreaLifeTime, _charID);
-        SecondAvilityUsedEvent(_secondAbilityCooldown);
-        _secondAbilityCooldownTimer = _secondAbilityCooldown;
+        _secondSkillDirection = Vector3.zero;
+        
         GetComponent<CharacterMovement>()?.UndoForcedStop();
     }
 

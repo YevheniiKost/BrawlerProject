@@ -27,7 +27,7 @@ public class CharacterIdentifier : MonoBehaviour
 public enum CharacterName
 {
     Beor,
-    Jisele
-  
+    Jisele,
+    Mork
 }
 

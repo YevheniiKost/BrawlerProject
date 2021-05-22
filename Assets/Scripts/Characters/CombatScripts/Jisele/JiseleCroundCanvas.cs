@@ -10,7 +10,7 @@ public class JiseleCroundCanvas : GroundCanvas
     void Update()
     {
         ForwardAimingFirstSkill();
-        TatgetAimingSecondSkill(_secondSkillRadius);
+        TargetAimingSecondSkill(_secondSkillRadius);
         AutoattackCircle();
         ChagePointersColor();
     }

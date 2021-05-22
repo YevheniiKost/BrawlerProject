@@ -77,7 +77,8 @@ public class GroundCanvas : MonoBehaviour
             _firstSkillPointer.gameObject.SetActive(false);
         }
     }
-    protected void TatgetAimingSecondSkill(float skillRadius)
+
+    protected void TargetAimingSecondSkill(float skillRadius)
     {
         if (_inputManager.IsPlayerHoldingSecondSkillButton)
         {
@@ -98,6 +99,7 @@ public class GroundCanvas : MonoBehaviour
             _secondSkillPointer.gameObject.SetActive(false);
         }
     }
+
 
     protected void ChagePointersColor()
     {
