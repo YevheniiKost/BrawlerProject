@@ -72,10 +72,13 @@ public class CharacterAnimation : MonoBehaviour, IStunComponent
 
     private void Update()
     {
-        if (!_navMeshAgent.isStopped)
-            _animator.SetFloat(_characterLocomotionParamID, _movement.NormilizedSpeed);
-        else
-            _animator.SetFloat(_characterLocomotionParamID, 0);
+        if (_navMeshAgent.enabled)
+        {
+            if (!_navMeshAgent.isStopped)
+                _animator.SetFloat(_characterLocomotionParamID, _movement.NormilizedSpeed);
+            else
+                _animator.SetFloat(_characterLocomotionParamID, 0);
+        }
     }
 
     private void OnCharacterDeathHandler(object character, CharacterDeath death)

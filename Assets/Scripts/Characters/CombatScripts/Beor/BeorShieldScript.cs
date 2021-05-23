@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class BeorShieldScript : MonoBehaviour
 {
+    [SerializeField] private ParticleSystem _hitParticles;
+
     private int _friendlyTeam;
     private int _damage;
     private float _speed;
@@ -36,8 +38,10 @@ public class BeorShieldScript : MonoBehaviour
             if (character.Team != _friendlyTeam)
             {
                 character.GetComponent<CharacterHealth>()?.ModifyHealth(-_damage, _thrower);
-
                 ServiceLocator.Resolve<CharacterEffectsManager>()?.StunEffect(character, _stunDuration);
+
+                EventAggregator.Post(this, new ShakeCamera { Intencity = 2, Time = .3f });
+                Instantiate(_hitParticles, other.transform.position, Quaternion.identity);
 
                 _contactsCount++;
 

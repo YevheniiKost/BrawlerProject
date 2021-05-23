@@ -27,17 +27,20 @@ public class MorkCombat : CharacterCombat
 
     public override void AttackBehavior()
     {
-        if (_secondAbilityCooldownTimer == 0)
+        if (!_isStunned)
         {
-            UseSecondSkill();
-        }
-        else if (_firstAbilityCooldownTimer == 0)
-        {
-            UseFirstSkill();
-        }
-        else
-        {
-            AutoAttack();
+            if (_secondAbilityCooldownTimer == 0)
+            {
+                UseSecondSkill();
+            }
+            else if (_firstAbilityCooldownTimer == 0)
+            {
+                UseFirstSkill();
+            }
+            else
+            {
+                AutoAttack();
+            }
         }
     }
 
@@ -103,24 +106,24 @@ public class MorkCombat : CharacterCombat
 
         float tParam = 0;
         int points = 100;
-
+        _navMeshAgent.enabled = false;
         while (tParam <= 1)
         {
-            
-            tParam += 1/(float)points;
-            
+
+            tParam += 1 / (float)points;
+
             Vector3 newPos = Mathf.Pow(1 - tParam, 3) * p1 +
                 3 * Mathf.Pow(1 - tParam, 2) * tParam * p2 +
                 3 * (1 - tParam) * Mathf.Pow(tParam, 2) * p3 +
                 Mathf.Pow(tParam, 3) * p4;
 
-            _navMeshAgent.baseOffset = newPos.y;
-
             transform.position = newPos;
             yield return new WaitForSeconds(secondSkillJumpTime / (float)points);
         }
+        if (_charID.IsControlledByThePlayer)
+            EventAggregator.Post(this, new ShakeCamera { Intencity = 5, Time = .5f });
         transform.position = secondSkillDirection;
-        _navMeshAgent.baseOffset = 0;
+        _navMeshAgent.enabled = true;
     }
     #endregion
 

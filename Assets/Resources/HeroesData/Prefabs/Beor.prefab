@@ -322,7 +322,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2954282114690767420}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.971}
+  m_LocalPosition: {x: 0, y: 1, z: 0.971}
   m_LocalScale: {x: 2.5225203, y: 1, z: 1.5692}
   m_Children: []
   m_Father: {fileID: 8505707825732311642}
@@ -5337,12 +5337,16 @@ MonoBehaviour:
   _autoAttackRate: 1.5
   EnemyDetectRadius: 12
   IsEnemyDetected: 0
+  _autoAttackHitParticles: {fileID: 19800000, guid: ed0461cd3e058824996611ece458593e,
+    type: 3}
   _shieldBashDamage: 80
   _shieldBashRadius: 0
   _shieldBashSlowingFactor: 30
   _shieldBashSlowingDuaration: 3
   _shieldBashCooldown: 5
   _shieldBashCollider: {fileID: 6421689308889747784}
+  _shieldBashHitParticles: {fileID: 19800000, guid: 7f4c89585715e1b439c3ff52db2c5a74,
+    type: 3}
   _shieldPrefab: {fileID: 5729627387295182034, guid: 3aa2b3054c8aee347ac2ea48c12f64f6,
     type: 3}
   _shieldStartPoint: {fileID: 7440297130401322500}

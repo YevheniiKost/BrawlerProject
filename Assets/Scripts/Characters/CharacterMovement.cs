@@ -36,42 +36,54 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
 
     public void ModifyMovementSpeed(float percent)
     {
-        _currentMovementSpeed = _initialMovementSpeed - percent * _initialMovementSpeed / 100;
-        _navMeshAgent.speed = _currentMovementSpeed;
-        RecalculateNormalizedSpeed();
+        if (_navMeshAgent.enabled)
+        {
+            _currentMovementSpeed = _initialMovementSpeed - percent * _initialMovementSpeed / 100;
+            _navMeshAgent.speed = _currentMovementSpeed;
+            RecalculateNormalizedSpeed();
+        }
     }
 
     public void ReturnNormalSpeed()
     {
-        _navMeshAgent.speed = _initialMovementSpeed;
-        _currentMovementSpeed = _initialMovementSpeed;
-        RecalculateNormalizedSpeed();
+        if (_navMeshAgent.enabled)
+        {
+            _navMeshAgent.speed = _initialMovementSpeed;
+            _currentMovementSpeed = _initialMovementSpeed;
+            RecalculateNormalizedSpeed();
+        }
     }
 
     #region AI movement
     public void SetTarget(Transform target)
     {
-        if (!ForcedStop && target != null)
+        if (_navMeshAgent.enabled)
         {
-            _navMeshAgent.isStopped = false;
-            _navMeshAgent.destination = target.position;
+            if (!ForcedStop && target != null)
+            {
+                _navMeshAgent.isStopped = false;
+                _navMeshAgent.destination = target.position;
 
-            _currentMovementSpeed = _navMeshAgent.speed;
-            RecalculateNormalizedSpeed();
-        }
-        else
-        {
-            StopMovement();
+                _currentMovementSpeed = _navMeshAgent.speed;
+                RecalculateNormalizedSpeed();
+            }
+            else
+            {
+                StopMovement();
+            }
         }
     }
 
     public void StopMovement()
     {
-        _navMeshAgent.destination = transform.position;
-        _navMeshAgent.isStopped = true;
+        if (_navMeshAgent.enabled)
+        {
+            _navMeshAgent.destination = transform.position;
+            _navMeshAgent.isStopped = true;
 
-        _currentMovementSpeed = _navMeshAgent.speed;
-        RecalculateNormalizedSpeed();
+            _currentMovementSpeed = _navMeshAgent.speed;
+            RecalculateNormalizedSpeed();
+        }
     }
     #endregion
 
@@ -97,7 +109,8 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
         else
             ProcessAIMovemet();
 
-        _isMoving = !_navMeshAgent.isStopped; 
+        if (_navMeshAgent.enabled)
+            _isMoving = !_navMeshAgent.isStopped;
     }
 
     private void SetDependencies()
@@ -109,25 +122,28 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
 
     private void ProcessPlayerMovement()
     {
-        if (_input.MovementDirection != Vector3.zero)
+        if (_navMeshAgent.enabled)
         {
-            _navMeshAgent.isStopped = false;
+            if (_input.MovementDirection != Vector3.zero)
+            {
+                _navMeshAgent.isStopped = false;
 
-            var newSpherePosition = transform.position + _input.MovementDirection;
-            _targetSphere.position = new Vector3(newSpherePosition.x, 0, newSpherePosition.z);
+                var newSpherePosition = transform.position + _input.MovementDirection;
+                _targetSphere.position = new Vector3(newSpherePosition.x, 0, newSpherePosition.z);
 
-            if (!_targetSphere.GetComponent<TargetSphere>().IsInObstacle)
-                _navMeshAgent.destination = _targetSphere.position;
-        }
-        else
-        {
-            _navMeshAgent.destination = transform.position;
-            _navMeshAgent.isStopped = true;
-            _targetSphere.position = new Vector3(transform.position.x, 0, transform.position.z);
-        }
+                if (!_targetSphere.GetComponent<TargetSphere>().IsInObstacle)
+                    _navMeshAgent.destination = _targetSphere.position;
+            }
+            else
+            {
+                _navMeshAgent.destination = transform.position;
+                _navMeshAgent.isStopped = true;
+                _targetSphere.position = new Vector3(transform.position.x, 0, transform.position.z);
+            }
 
-        _currentMovementSpeed = _navMeshAgent.speed;
-        RecalculateNormalizedSpeed();
+            _currentMovementSpeed = _navMeshAgent.speed;
+            RecalculateNormalizedSpeed();
+        } 
     }
 
     private void ProcessAIMovemet()

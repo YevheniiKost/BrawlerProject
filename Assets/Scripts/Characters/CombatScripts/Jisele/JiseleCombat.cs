@@ -28,6 +28,7 @@ public class JiseleCombat : CharacterCombat
     [SerializeField] private float _fireAreaRadius;
     [SerializeField] private float _fireAreaLifeTime;
     [SerializeField] private JiseleMeteor _meteorPrefab;
+    [SerializeField] private ParticleSystem _secondSkillCastParticles;
 
     private Vector3 _autoattackDirection = Vector3.zero;
     private Vector3 _firstSkillDirection = Vector3.zero;
@@ -35,17 +36,20 @@ public class JiseleCombat : CharacterCombat
 
     public override void AttackBehavior()
     {
-        if (_secondAbilityCooldownTimer == 0)
+        if (!_isStunned)
         {
-            UseSecondSkill();
-        }
-        else if (_firstAbilityCooldownTimer == 0)
-        {
-            UseFirstSkill();
-        }
-        else
-        {
-            AutoAttack();
+            if (_secondAbilityCooldownTimer == 0)
+            {
+                UseSecondSkill();
+            }
+            else if (_firstAbilityCooldownTimer == 0)
+            {
+                UseFirstSkill();
+            }
+            else
+            {
+                AutoAttack();
+            }
         }
     }
 
@@ -109,6 +113,7 @@ public class JiseleCombat : CharacterCombat
                 _secondSkillDirection = direction * _secondAbilityRadius;
             }
             OnSecondSkillUse();
+            _secondSkillCastParticles.Play();
             SecondAvilityUsedEvent(_secondAbilityCooldown);
             _secondAbilityCooldownTimer = _secondAbilityCooldown;
             GetComponent<CharacterMovement>()?.ProcessForcedStop();

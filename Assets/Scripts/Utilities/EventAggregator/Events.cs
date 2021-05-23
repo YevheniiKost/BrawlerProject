@@ -68,5 +68,6 @@ public class SecondAbilityWasUsed { public float Cooldown; }
 public class OnStartGameScene { public float GameStartTime; }
 public class OnGetPoint { public Team CharacterTeam; }
 public class UpdateCrystalCounter { public Team CurrentTeam; public int CurrentCrystalCount; }
+public class ShakeCamera { public float Intencity; public float Time; }
 #endregion
 

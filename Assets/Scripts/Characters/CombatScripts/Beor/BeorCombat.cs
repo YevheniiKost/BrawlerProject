@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class BeorCombat : CharacterCombat
 {
+    [SerializeField] private ParticleSystem _autoAttackHitParticles;
+
     [Header("Shield bash")]
     [SerializeField] private int _shieldBashDamage = 10;
     [SerializeField] private float _shieldBashRadius;
@@ -12,6 +14,7 @@ public class BeorCombat : CharacterCombat
     [SerializeField] private float _shieldBashSlowingDuaration;
     [SerializeField] private float _shieldBashCooldown;
     [SerializeField] private ShieldBashCollider _shieldBashCollider;
+    [SerializeField] private ParticleSystem _shieldBashHitParticles;
 
     [Header("Shield throw")]
     [SerializeField] private BeorShieldScript _shieldPrefab;
@@ -28,6 +31,8 @@ public class BeorCombat : CharacterCombat
 
     public override void AttackBehavior()
     {
+        if (!_isStunned)
+        {
             if (_secondAbilityCooldownTimer == 0)
             {
                 UseSecondSkill();
@@ -40,6 +45,7 @@ public class BeorCombat : CharacterCombat
             {
                 AutoAttack();
             }
+        }
     }
 
     #region Use of skills
@@ -156,6 +162,7 @@ public class BeorCombat : CharacterCombat
         if (Target.TryGetComponent(out CharacterHealth enemy))
         {
             enemy.ModifyHealth(-_autoAttackDamage, _charID);
+            Instantiate(_autoAttackHitParticles, enemy.transform.position, Quaternion.identity);
             _timeToNextAttack = 0;
         }
     }
@@ -179,7 +186,7 @@ public class BeorCombat : CharacterCombat
             {
                 contact.GetComponent<CharacterHealth>().ModifyHealth(-_shieldBashDamage, _charID);
                 _effectsManager.SnareEffect(contact, _shieldBashSlowingFactor, _shieldBashSlowingDuaration);
-                Debug.Log($"{contact.gameObject.name} get damageded");
+                Instantiate(_shieldBashHitParticles, contact.transform.position, Quaternion.identity);
             }
         }
         _shieldBashCollider.ClearContacts();

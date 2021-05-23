@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CrystalSpot : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class CrystalSpot : MonoBehaviour
     [SerializeField] private float _timeToTakeFriendlyCrystal = 3f;
     [SerializeField] private float _friendlyCrystalGrabDistance = 1f;
     [SerializeField] private Team _crystalType;
+    [SerializeField] private Transform _chestCover;
+    [SerializeField] private Image _visualTimer;
+    [SerializeField] private ParticleSystem _redParticles;
+    [SerializeField] private ParticleSystem _blueParticles;
 
     [Header("Tecnical parameters")]
     [SerializeField] private float _spawnHeigth = 1f;
@@ -30,22 +35,43 @@ public class CrystalSpot : MonoBehaviour
     {
         SpawnCrystal();
         StartCoroutine(WaitAndSpawnCrystal(_crystalSpawnCooldown));
+
     }
 
     private void Update()
     {
-        if (_isFriendlyCharacterHere && IsCrystalOn)
+        HandleCrystalSpot();
+    }
+
+    private void HandleCrystalSpot()
+    {
+        if (IsCrystalOn)
         {
-            if(Vector3.Distance(transform.position, _frienlyChar.transform.position) < _friendlyCrystalGrabDistance)
+            _visualTimer.enabled = true;
+            _chestCover.transform.localRotation = Quaternion.Euler(new Vector3(-90, 0, 0));
+            if (_isFriendlyCharacterHere)
             {
-                _friendlyCrystalGrabCooldown += Time.deltaTime;
-                if(_friendlyCrystalGrabCooldown >= _timeToTakeFriendlyCrystal)
+                if (Vector3.Distance(transform.position, _frienlyChar.transform.position) < _friendlyCrystalGrabDistance)
                 {
-                    ImmediatlyGetCrystal();
-                    EventAggregator.Post(this, new OnGetPoint { CharacterTeam = SpotTeam });
-                    _friendlyCrystalGrabCooldown = 0;
+                    _friendlyCrystalGrabCooldown += Time.deltaTime;
+                    _visualTimer.fillAmount -= 1 / _timeToTakeFriendlyCrystal * Time.deltaTime;
+                    if (_friendlyCrystalGrabCooldown >= _timeToTakeFriendlyCrystal)
+                    {
+                        ImmediatlyGetCrystal();
+                        EventAggregator.Post(this, new OnGetPoint { CharacterTeam = SpotTeam });
+                        _friendlyCrystalGrabCooldown = 0;
+                    }
+                }
+                else
+                {
+                    _visualTimer.fillAmount = 1;
                 }
             }
+        }
+        else
+        {
+            _chestCover.transform.localRotation = Quaternion.Euler(Vector3.zero);
+            _visualTimer.enabled = false;
         }
     }
 
@@ -103,9 +129,18 @@ public class CrystalSpot : MonoBehaviour
 
     private void ImmediatlyGetCrystal()
     {
+        PlayPaticles();
         IsCrystalOn = false;
         Destroy(_currentCrystal.gameObject);
         StartCoroutine(WaitAndSpawnCrystal(_crystalSpawnCooldown));
+    }
+
+    private void PlayPaticles()
+    {
+        if (_crystalType == Team.Red)
+            _redParticles.Play();
+        else
+            _blueParticles.Play();
     }
 
     private IEnumerator WaitAndSpawnCrystal(float coolDown)

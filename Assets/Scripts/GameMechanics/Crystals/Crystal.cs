@@ -1,18 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class Crystal : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField] private float _rotationSpeed;
+
+    private Tweener _tweener;
     void Start()
     {
-        
+        _tweener = transform.DOLocalRotate(new Vector3(0, 360, 0), _rotationSpeed).SetLoops(-1);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
-        
+        _tweener.Kill(false);
     }
+
 }
