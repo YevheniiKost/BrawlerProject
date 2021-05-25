@@ -77,6 +77,7 @@ public class BeorCombat : CharacterCombat
             }
             OnFirstSkillUse();
             FirstAbilityUsedEvent(_shieldBashCooldown);
+            ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Beor02Use);
             _shieldBashCollider.gameObject.SetActive(true);
             _firstAbilityCooldownTimer = _shieldBashCooldown;
         }
@@ -84,7 +85,7 @@ public class BeorCombat : CharacterCombat
 
     public override void UseSecondSkill()
     {
-        if(_secondAbilityCooldownTimer == 0 && !_isStunned)
+        if (_secondAbilityCooldownTimer == 0 && !_isStunned)
         {
             if (_secondSkillDirection == Vector3.zero)
             {
@@ -99,11 +100,12 @@ public class BeorCombat : CharacterCombat
                     _secondSkillDirection = Vector3.up;
                 }
             }
-          
-             transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_secondSkillDirection.x, _secondSkillDirection.y) * Mathf.Rad2Deg, 0);
-             OnSecondSkillUse();
-             SecondAvilityUsedEvent(_shieldThrowCooldown);
-             GetComponent<CharacterMovement>()?.ProcessForcedStop();
+
+            transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_secondSkillDirection.x, _secondSkillDirection.y) * Mathf.Rad2Deg, 0);
+            OnSecondSkillUse();
+            SecondAvilityUsedEvent(_shieldThrowCooldown);
+            
+            GetComponent<CharacterMovement>()?.ProcessForcedStop();
             _secondAbilityCooldownTimer = _shieldThrowCooldown;
         }
     }
@@ -163,6 +165,7 @@ public class BeorCombat : CharacterCombat
         {
             enemy.ModifyHealth(-_autoAttackDamage, _charID);
             Instantiate(_autoAttackHitParticles, enemy.transform.position, Quaternion.identity);
+            ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Beor01Hit);
             _timeToNextAttack = 0;
         }
     }
@@ -170,6 +173,7 @@ public class BeorCombat : CharacterCombat
     private void FirstSkillHit()
     {
         var contacts = new List<CharacterIdentifier>(_shieldBashCollider.GetContacts());
+        
 
         if (contacts.Count == 0)
         {
@@ -184,6 +188,7 @@ public class BeorCombat : CharacterCombat
             }
             else
             {
+                ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Beor02Hit);
                 contact.GetComponent<CharacterHealth>().ModifyHealth(-_shieldBashDamage, _charID);
                 _effectsManager.SnareEffect(contact, _shieldBashSlowingFactor, _shieldBashSlowingDuaration);
                 Instantiate(_shieldBashHitParticles, contact.transform.position, Quaternion.identity);
@@ -196,6 +201,7 @@ public class BeorCombat : CharacterCombat
    private void SecondSkillHit()
     {
         var shield = Instantiate(_shieldPrefab, _shieldStartPoint.position + Vector3.down * .5f, Quaternion.identity);
+        ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Beor03Use);
         shield.GetData(_shieldThrowDamage, _shieldThrowSpeed, _shieldThrowDistance, new Vector3(_secondSkillDirection.x, 0, _secondSkillDirection.y).normalized, _charID, _shieldThrowStunDuration);
         GetComponent<CharacterMovement>()?.UndoForcedStop();
     }

@@ -49,6 +49,7 @@ public class JiseleMeteor : MonoBehaviour
         Destroy(_meteor.gameObject);
         _explosion.Play();
         _burningArea.Play();
+        ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Jisele03Hit);
         if (_caster.IsControlledByThePlayer)
             EventAggregator.Post(this, new ShakeCamera { Intencity = 5, Time = .5f });
         var col = Physics.OverlapSphere(transform.position, _meteorExplodeRadius);

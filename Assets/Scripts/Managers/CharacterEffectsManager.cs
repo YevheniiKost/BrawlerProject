@@ -25,6 +25,14 @@ public class CharacterEffectsManager : MonoBehaviour
         _sceneEffects.Add(new SnareEffect(duration, speedReducerInPercent, character, cor));
     }
 
+    private IEnumerator StartSnareCoroutine(CharacterIdentifier character, float speedReducer, float duration)
+    {
+        character.GetComponent<CharacterMovement>()?.ModifyMovementSpeed(speedReducer);
+        yield return new WaitForSeconds(duration);
+        character.GetComponent<CharacterMovement>()?.ReturnNormalSpeed();
+        yield return null;
+    }
+
     public void StunEffect(CharacterIdentifier character, float duration)
     {
         for (int i = 0; i < _sceneEffects.Count; i++)
@@ -59,13 +67,7 @@ public class CharacterEffectsManager : MonoBehaviour
         yield return null;
     }
 
-    private IEnumerator StartSnareCoroutine(CharacterIdentifier character, float speedReducer, float duration)
-    {
-        character.GetComponent<CharacterMovement>()?.ModifyMovementSpeed(speedReducer);
-        yield return new WaitForSeconds(duration);
-        character.GetComponent<CharacterMovement>()?.ReturnNormalSpeed();
-        yield return null;
-    }
+  
 
     private void Awake()
     {

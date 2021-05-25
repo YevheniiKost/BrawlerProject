@@ -34,6 +34,8 @@ public class StartGameCoundtown : MonoBehaviour
             else
                 _text.text = "To Battle!";
             gameStartTime--;
+            ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.StartBattle);
+
             yield return new WaitForSeconds(1);
         }
 

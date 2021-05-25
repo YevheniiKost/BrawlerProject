@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    public static AudioManager Instance;
+
     [SerializeField] private AudioSource _soundFxSource;
     [SerializeField] private AudioSource _musicSource;
 
     [SerializeField] private List<SoundFxData> _soundsFXList = new List<SoundFxData>();
     [SerializeField] private List<MusicData> _musicList = new List<MusicData>();
-
-    public static AudioManager Instance;
 
     public float MusicVolume => _musicVolume;
     public float SoundFXVolume => _soundsFXVolume;
@@ -39,6 +39,11 @@ public class AudioManager : MonoBehaviour
     {
         _musicSource.clip = GetMusicClip(music);
         _musicSource.Play();
+    }
+
+    public void StopMusic()
+    {
+        _musicSource.Stop();
     }
 
     public void SetSoundFX(bool isOn)
@@ -76,20 +81,22 @@ public class AudioManager : MonoBehaviour
         if (Instance != null)
             Destroy(this.gameObject);
         else
+        {
             Instance = this;
-
-        ServiceLocator.Register(this);
+            ServiceLocator.Register(this);
+        }
+        
     }
 
-    private void OnDestroy()
-    {
-        ServiceLocator.Unregister(this);
-    }
 
     private void Start()
     {
         _musicVolume = PlayerPrefs.GetFloat(_musicVolumeKey);
+        if (_musicVolume == 0)
+            _musicVolume = 1;
         _soundsFXVolume = PlayerPrefs.GetFloat(_soundVolumeKey);
+        if (_soundsFXVolume == 0)
+            _soundsFXVolume = 1;
         _isMusicOn = PlayerPrefs.GetInt(_musicMuteKey) != 0;
         _isSoundsOn = PlayerPrefs.GetInt(_sounsMuteKey) != 0;
 
@@ -114,7 +121,36 @@ public class AudioManager : MonoBehaviour
 
 public enum SoundsFx
 {
-   
+    // UI
+    ButtonSound,
+
+    //Characters abilities
+    Beor01Hit,
+    Beor02Use,
+    Beor02Hit,
+    Beor03Use,
+    Beor03Hit,
+    BeorDeath,
+
+    Jisele01Hit,
+    Jisele02Use,
+    Jisele02Hit,
+    Jisele03Use,
+    Jisele03Hit,
+    JiseleDeath,
+
+    Mork01Hit,
+    Mork02Use,
+    Mork02Hit,
+    Mork03Use,
+    Mork03Hit,
+    MorkDeath,
+
+    //Gameplay
+    CrystalGet,
+    StartBattle,
+    EndBattle
+
 }
 
 public enum MusicType

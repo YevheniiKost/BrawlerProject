@@ -38,22 +38,22 @@ public class SettingsWindow : MonoBehaviour,IWindow
 
     private void SoundToggleHandler(bool arg0)
     {
-        throw new NotImplementedException();
+        ServiceLocator.Resolve<AudioManager>().SetSoundFX(arg0);
     }
 
     private void MusicToggleHandler(bool arg0)
     {
-        throw new NotImplementedException();
+        ServiceLocator.Resolve<AudioManager>().SetMusic(arg0);
     }
 
     private void SoudVolumeSliderHandler(float arg0)
     {
-        throw new NotImplementedException();
+        ServiceLocator.Resolve<AudioManager>().SetFXVolume(arg0);
     }
 
     private void MusicVolumeSliderHandler(float arg0)
     {
-        throw new NotImplementedException();
+        ServiceLocator.Resolve<AudioManager>().SetMusicVolume(arg0);
     }
 
     private void OnCloseButtonClickHandler()

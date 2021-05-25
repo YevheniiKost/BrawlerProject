@@ -13,6 +13,8 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
     [Header("Development")]
     [SerializeField] private Transform _targetSphere;
 
+    [SerializeField] private ParticleSystem _slowDownParticles;
+
     public bool ForcedStop = false;
     public float NormilizedSpeed;
     public bool IsCharacterMoving => _isMoving;
@@ -38,6 +40,9 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
     {
         if (_navMeshAgent.enabled)
         {
+            if (percent > 0)
+                _slowDownParticles.gameObject.SetActive(true);
+
             _currentMovementSpeed = _initialMovementSpeed - percent * _initialMovementSpeed / 100;
             _navMeshAgent.speed = _currentMovementSpeed;
             RecalculateNormalizedSpeed();
@@ -48,6 +53,7 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
     {
         if (_navMeshAgent.enabled)
         {
+            _slowDownParticles.gameObject.SetActive(false);
             _navMeshAgent.speed = _initialMovementSpeed;
             _currentMovementSpeed = _initialMovementSpeed;
             RecalculateNormalizedSpeed();

@@ -86,6 +86,7 @@ public class JiseleCombat : CharacterCombat
             transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_firstSkillDirection.x, _firstSkillDirection.z) * Mathf.Rad2Deg, 0);
             OnFirstSkillUse();
             FirstAbilityUsedEvent(_fireballCooldown);
+            
             _firstAbilityCooldownTimer = _fireballCooldown;
             GetComponent<CharacterMovement>()?.ProcessForcedStop();
            
@@ -114,6 +115,7 @@ public class JiseleCombat : CharacterCombat
             }
             OnSecondSkillUse();
             _secondSkillCastParticles.Play();
+            ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Jisele03Use);
             SecondAvilityUsedEvent(_secondAbilityCooldown);
             _secondAbilityCooldownTimer = _secondAbilityCooldown;
             GetComponent<CharacterMovement>()?.ProcessForcedStop();
@@ -183,6 +185,7 @@ public class JiseleCombat : CharacterCombat
     private void FirstSkillHit()
     {
         var fireBall = Instantiate(_fireballPrefab, _fireballStartPoint.position, Quaternion.identity);
+        ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Jisele02Use);
         fireBall.SetData(_fireaballDamage, _fireballSpeed, _fireballFlyDistance, _firstSkillDirection, _charID);
         _firstSkillDirection = Vector3.zero;
         GetComponent<CharacterMovement>()?.UndoForcedStop();

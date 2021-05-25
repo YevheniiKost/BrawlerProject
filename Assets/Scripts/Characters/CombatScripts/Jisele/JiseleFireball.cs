@@ -34,6 +34,7 @@ public class JiseleFireball : MonoBehaviour
             if (enemy.Team != _thrower.Team && !_enemyList.Contains(enemy))
             {
                 enemy.GetComponent<CharacterHealth>().ModifyHealth(-_damage, _thrower);
+                ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Jisele02Hit);
                 _enemyList.Add(enemy);
             }
         }

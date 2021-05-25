@@ -23,6 +23,7 @@ public class GamePlayManager : MonoBehaviour
     private float _matchTimer;
     private IGameTimer _gameTimer;
     private GameManager _gameManager;
+    private bool _isGameStarted;
 
     private void Awake()
     {
@@ -36,6 +37,8 @@ public class GamePlayManager : MonoBehaviour
 
     private void Start()
     {
+        _isGameStarted = false;
+        Time.timeScale = 1f;
         StartGameScene();
         EventAggregator.Post(this, new TransferCurrentCharacterData { Data = _gameManager.ListOfHeroes[_gameManager.SelectedHero] });
     }
@@ -44,14 +47,12 @@ public class GamePlayManager : MonoBehaviour
     {
         if (_matchTimer > 0)
             _matchTimer -= Time.deltaTime;
-        else if(_matchTimer <= 0)
+        else if (_matchTimer <= 0 && _isGameStarted)
         {
             EndGameHandler();
         }
         _gameTimer.UpdateTimer(_matchTimer);
     }
-
-  
 
     private void OnDestroy()
     {
@@ -73,8 +74,11 @@ public class GamePlayManager : MonoBehaviour
 
     private void EndGameHandler()
     {
+        _isGameStarted = false;
         Team winner;
-        if(_redTeamPoints > _blueTeamPoints)
+        ServiceLocator.Resolve<AudioManager>().StopMusic();
+        ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.EndBattle);
+        if (_redTeamPoints > _blueTeamPoints)
         {
             winner = Team.Red;
             EventAggregator.Post(this, new OnEndGame { Winner = winner });
@@ -93,11 +97,15 @@ public class GamePlayManager : MonoBehaviour
     private void StartAcluallyGame(object arg1, OnStartGame arg2)
     {
         _matchTimer = MatchData.BattleDuration;
+        _isGameStarted = true;
     }
-
 
     private void OnCharacterDeathHadler(object arg1, CharacterDeath data)
     {
+        if (data.Killer.Team == 0)
+            EventAggregator.Post(this, new OnGetPoint { CharacterTeam = Team.Red });
+        else
+            EventAggregator.Post(this, new OnGetPoint { CharacterTeam = Team.Blue });
         StartCoroutine(HandleCharacterDeath(_characterDeathTimer, data.Character));
     }
 

@@ -40,6 +40,8 @@ public class BeorShieldScript : MonoBehaviour
                 character.GetComponent<CharacterHealth>()?.ModifyHealth(-_damage, _thrower);
                 ServiceLocator.Resolve<CharacterEffectsManager>()?.StunEffect(character, _stunDuration);
 
+                ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Beor03Hit);
+
                 EventAggregator.Post(this, new ShakeCamera { Intencity = 2, Time = .3f });
                 Instantiate(_hitParticles, other.transform.position, Quaternion.identity);
 

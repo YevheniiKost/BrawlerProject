@@ -362,7 +362,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -1525,10 +1525,10 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1781,8 +1781,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _soundFxSource: {fileID: 222775726}
   _musicSource: {fileID: 1549356116}
-  _soundsFXList: []
-  _musicList: []
+  _soundsFXList:
+  - SoundFx: 0
+    Clip: {fileID: 8300000, guid: e028bc0984d8ac446b8c8a0916b2c339, type: 3}
+  - SoundFx: 1
+    Clip: {fileID: 8300000, guid: 5a67e263b55143a4d83b1d42d2084c03, type: 3}
+  - SoundFx: 2
+    Clip: {fileID: 8300000, guid: deb63d0bf0da48744a19498ffa5943ee, type: 3}
+  - SoundFx: 3
+    Clip: {fileID: 8300000, guid: 75adfe9a619833445a701305b983e548, type: 3}
+  - SoundFx: 4
+    Clip: {fileID: 8300000, guid: deb63d0bf0da48744a19498ffa5943ee, type: 3}
+  - SoundFx: 5
+    Clip: {fileID: 8300000, guid: 75adfe9a619833445a701305b983e548, type: 3}
+  - SoundFx: 6
+    Clip: {fileID: 8300000, guid: bc378bad2e121d1469a7907c3b222560, type: 3}
+  - SoundFx: 7
+    Clip: {fileID: 0}
+  - SoundFx: 8
+    Clip: {fileID: 8300000, guid: 02a75a5757352994e9489d59bc8311f1, type: 3}
+  - SoundFx: 9
+    Clip: {fileID: 8300000, guid: 4dd9ed128ff265c40b79f2b8f5d9ca78, type: 3}
+  - SoundFx: 10
+    Clip: {fileID: 8300000, guid: 84bc9f2fda8525340bdfc3aedfa2fc2a, type: 3}
+  - SoundFx: 11
+    Clip: {fileID: 8300000, guid: 8a44b12d3e3f24b1a89dc7f0b66756f4, type: 3}
+  - SoundFx: 13
+    Clip: {fileID: 8300000, guid: a3a009e47134af3408084b772cdc066f, type: 3}
+  - SoundFx: 15
+    Clip: {fileID: 8300000, guid: b32e5deb91bcb9844a8193ac836ccece, type: 3}
+  - SoundFx: 19
+    Clip: {fileID: 8300000, guid: 667cd1f6f3326644eb59355603cfeecf, type: 3}
+  - SoundFx: 17
+    Clip: {fileID: 8300000, guid: b3a5bf48f35fd7b43a319ae720d0b118, type: 3}
+  - SoundFx: 6
+    Clip: {fileID: 8300000, guid: bc378bad2e121d1469a7907c3b222560, type: 3}
+  - SoundFx: 12
+    Clip: {fileID: 8300000, guid: 58d998ae32fcbfa44b1f77c449bbc30c, type: 3}
+  - SoundFx: 18
+    Clip: {fileID: 8300000, guid: 5588b15da5e67d64397fbcfc6369322a, type: 3}
+  - SoundFx: 21
+    Clip: {fileID: 8300000, guid: 0e3e34390361979428f7a779c139f78a, type: 3}
+  - SoundFx: 20
+    Clip: {fileID: 8300000, guid: e028bc0984d8ac446b8c8a0916b2c339, type: 3}
+  _musicList:
+  - Music: 0
+    Clip: {fileID: 8300000, guid: 65eda5bc0642a7146adace52ee197e05, type: 3}
+  - Music: 1
+    Clip: {fileID: 8300000, guid: 917f88a682437e34081604d01e75b17d, type: 3}
 --- !u!4 &1618230510
 Transform:
   m_ObjectHideFlags: 0
@@ -2607,6 +2653,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1835679467}
     m_Modifications:
+    - target: {fileID: 1470678315877515014, guid: bd554fed81f59574eb73708dac5323e6,
+        type: 3}
+      propertyPath: m_text
+      value: Ultimate brawler
+      objectReference: {fileID: 0}
+    - target: {fileID: 1470678315877515014, guid: bd554fed81f59574eb73708dac5323e6,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 128.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1470678315877515014, guid: bd554fed81f59574eb73708dac5323e6,
+        type: 3}
+      propertyPath: m_fontSizeBase
+      value: 128.6
+      objectReference: {fileID: 0}
     - target: {fileID: 7235654245385536986, guid: bd554fed81f59574eb73708dac5323e6,
         type: 3}
       propertyPath: m_Pivot.x

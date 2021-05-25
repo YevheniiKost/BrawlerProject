@@ -11,6 +11,7 @@ public class MorkCombat : CharacterCombat
     [SerializeField] private float _firstSkillSlowdownEffect;
     [SerializeField] private float _firstSkillSlowdownDuration;
     [SerializeField] private float _firstSkillCooldown;
+    [SerializeField] private Transform _firstSkillParticles;
 
     [Header("Rock jump")]
     [SerializeField] private float _secondSkillCooldown;
@@ -20,6 +21,7 @@ public class MorkCombat : CharacterCombat
     [SerializeField] private float _secondSkillStunDuration;
     [SerializeField] private float _secondSkillJumpTime;
     [SerializeField] private float _jumpHeight;
+    [SerializeField] private Transform _secondSkillParticles;
 
 
     private NavMeshAgent _navMeshAgent;
@@ -53,6 +55,7 @@ public class MorkCombat : CharacterCombat
             {
                 transform.LookAt(_target);
                 OnAutoAttack();
+                ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Mork01Hit);
                 _timeToNextAttack = 0;
             }
         }
@@ -80,7 +83,7 @@ public class MorkCombat : CharacterCombat
                 }
                 else
                 {
-                    _secondSkillDirection = Vector3.forward;
+                    _secondSkillDirection = transform.position + Vector3.forward * _secondSkillJumpDistance;
                 }
             }
             else
@@ -105,12 +108,12 @@ public class MorkCombat : CharacterCombat
         Vector3 p4 = new Vector3(secondSkillDirection.x, 0, secondSkillDirection.z);
 
         float tParam = 0;
-        int points = 100;
+       //int points = 100;
         _navMeshAgent.enabled = false;
         while (tParam <= 1)
         {
 
-            tParam += 1 / (float)points;
+            tParam += Time.deltaTime * _secondSkillJumpTime;
 
             Vector3 newPos = Mathf.Pow(1 - tParam, 3) * p1 +
                 3 * Mathf.Pow(1 - tParam, 2) * tParam * p2 +
@@ -118,11 +121,13 @@ public class MorkCombat : CharacterCombat
                 Mathf.Pow(tParam, 3) * p4;
 
             transform.position = newPos;
-            yield return new WaitForSeconds(secondSkillJumpTime / (float)points);
+            yield return new WaitForEndOfFrame();
         }
         if (_charID.IsControlledByThePlayer)
             EventAggregator.Post(this, new ShakeCamera { Intencity = 5, Time = .5f });
         transform.position = secondSkillDirection;
+        Instantiate(_secondSkillParticles, transform.position + Vector3.up * .02f, Quaternion.identity);
+        ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Mork03Hit);
         _navMeshAgent.enabled = true;
     }
     #endregion
@@ -186,6 +191,9 @@ public class MorkCombat : CharacterCombat
 
     private void FirstSkillHit()
     {
+        Instantiate(_firstSkillParticles, transform.position + Vector3.up * .02f, Quaternion.identity);
+        ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Mork02Hit);
+
         var contacts = Physics.OverlapSphere(transform.position, _firstSkillRadius);
         for (int i = 0; i < contacts.Length; i++)
         {

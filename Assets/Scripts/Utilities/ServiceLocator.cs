@@ -15,7 +15,7 @@ public static class ServiceLocator
             return;
         }
         _services[typeof(T)] = service;
-       // Debug.Log($"Was registered: {typeof(T).Name}");
+        Debug.Log($"Was registered: {typeof(T).Name}");
     }
 
     public static void Unregister<T>(T service) where T : class
@@ -28,6 +28,7 @@ public static class ServiceLocator
         {
             Debug.Log("This service was already unregistered");
         }
+        Debug.Log($"Was unregistered: {typeof(T).Name}");
     }
 
     public static T Resolve<T>() where T : class

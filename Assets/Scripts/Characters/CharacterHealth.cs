@@ -11,7 +11,7 @@ public enum LifeStatus
     Dead
 }
 
-
+[RequireComponent(typeof(CharacterIdentifier)), RequireComponent(typeof(CharacterHealth))]
 public class CharacterHealth : MonoBehaviour
 {
     public event Action<float> OnHealthPctChange = delegate { };
@@ -85,6 +85,15 @@ public class CharacterHealth : MonoBehaviour
     private void ProcessCharacterDead(CharacterIdentifier killer)
     {
         EventAggregator.Post(this, new CharacterDeath { Killer = killer, Character = this });
+
+        if (GetComponent<CharacterIdentifier>().Name == CharacterName.Beor)
+            ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.BeorDeath);
+        else if (GetComponent<CharacterIdentifier>().Name == CharacterName.Jisele)
+            ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.JiseleDeath);
+        else if (GetComponent<CharacterIdentifier>().Name == CharacterName.Mork)
+            ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.MorkDeath);
+
+        GetComponent<CharacterMovement>().StopMovement();
     }
 
     private float PercentOfHealth()

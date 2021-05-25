@@ -67,6 +67,10 @@ public class CrystalSpot : MonoBehaviour
                     _visualTimer.fillAmount = 1;
                 }
             }
+            else
+            {
+                _visualTimer.fillAmount = 1;
+            }
         }
         else
         {
@@ -129,6 +133,7 @@ public class CrystalSpot : MonoBehaviour
 
     private void ImmediatlyGetCrystal()
     {
+        ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.CrystalGet);
         PlayPaticles();
         IsCrystalOn = false;
         Destroy(_currentCrystal.gameObject);
@@ -152,6 +157,10 @@ public class CrystalSpot : MonoBehaviour
     private void SpawnCrystal()
     {
         IsCrystalOn = true;
+        if(_currentCrystal != null)
+        {
+            Destroy(_currentCrystal.gameObject);
+        }
         _currentCrystal = Instantiate(GetCorrectCrystal(), transform.position + Vector3.up * _spawnHeigth, Quaternion.identity);
         _currentCrystal.transform.parent = transform;
     }

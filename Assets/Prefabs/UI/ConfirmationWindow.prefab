@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6420209205840776036}
   - component: {fileID: 1997352514526705020}
   - component: {fileID: 2252800285492390731}
+  - component: {fileID: 4367751878063132088}
   m_Layer: 5
   m_Name: NoButton
   m_TagString: Untagged
@@ -119,6 +120,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4367751878063132088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1356115518052890224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 634413ae6bb573f4bafc7bb845c379db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1534983841495399946
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,7 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db94042604fb3cb4e9e13dced33e3fa0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _text: {fileID: 742535552383425916}
+  _messageText: {fileID: 0}
   _yesButton: {fileID: 9212355932137008802}
   _noButton: {fileID: 2252800285492390731}
 --- !u!1 &2730180988861202417
@@ -519,6 +532,7 @@ GameObject:
   - component: {fileID: 7739028882134943800}
   - component: {fileID: 1125750406019765678}
   - component: {fileID: 9212355932137008802}
+  - component: {fileID: 1120877109216490836}
   m_Layer: 5
   m_Name: YesButton
   m_TagString: Untagged
@@ -626,6 +640,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1120877109216490836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5544150670843028372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 634413ae6bb573f4bafc7bb845c379db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8314152543577598874
 GameObject:
   m_ObjectHideFlags: 0
@@ -840,15 +866,3 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 2817426670200215953}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &742535552383425916 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3267227971359294701, guid: 347c4c876e1c8964fbfc25efcea4b99f,
-    type: 3}
-  m_PrefabInstance: {fileID: 2817426670200215953}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

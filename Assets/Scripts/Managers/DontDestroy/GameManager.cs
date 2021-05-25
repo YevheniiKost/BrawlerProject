@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     public TeamMatchSetup CurrentTeamMatchData;
 
     private UIManager _uiManager;
+    private AudioManager _audioManger;
 
     private void Awake()
     {
@@ -49,11 +50,22 @@ public class GameManager : MonoBehaviour
     {
         GenerateMatchData();
         _uiManager = ServiceLocator.Resolve<UIManager>();
+        _audioManger = ServiceLocator.Resolve<AudioManager>();
+        _audioManger.PlayMusic(MusicType.MainMenu);
     }
 
     #region Scene management
-    private void ProcessPlayClick(object arg1, OnPlayClick arg2) => SceneManager.LoadScene(GameConstants.Scenes.TeamMatch);
-    private void LoadMainMenuScene(object arg1, OnStartScenePlayClick arg2) => SceneManager.LoadScene(GameConstants.Scenes.MainMenu);
+    private void ProcessPlayClick(object arg1, OnPlayClick arg2)
+    {
+        SceneManager.LoadScene(GameConstants.Scenes.TeamMatch);
+        _audioManger.PlayMusic(MusicType.Game);
+    }
+
+    private void LoadMainMenuScene(object arg1, OnStartScenePlayClick arg2)
+    {
+        SceneManager.LoadScene(GameConstants.Scenes.MainMenu);
+    }
+
     private void ReturnToMainMenu(object arg1, OnReturnToMainMenuClick arg2)
     {
         if (_uiManager.Windows.ContainsKey(typeof(ConfirmationWindow)))
@@ -66,11 +78,10 @@ public class GameManager : MonoBehaviour
             UnpauseGame();
             Return();
         }
-            
-
     }
     private void Return()
     {
+        _audioManger.PlayMusic(MusicType.MainMenu);
         SceneManager.LoadScene(GameConstants.Scenes.StartMenu);
     }
     private void ExitGameHandler(object arg1, OnExitGameClickes arg2) => _uiManager.CreateConfirmationWindow(ExitGame, "Exit game?");
@@ -81,6 +92,7 @@ public class GameManager : MonoBehaviour
     private void RestartTeamFigth()
     {
         UnpauseGame();
+        _audioManger.PlayMusic(MusicType.Game);
         SceneManager.LoadScene(GameConstants.Scenes.TeamMatch);
     }
     private void EndGameHandler(object arg1, OnEndGame arg2) => PauseGame();

@@ -15,7 +15,6 @@ public class UIManager : MonoBehaviour
         OpenWindow(typeof(ConfirmationWindow));
         _confirmationWindow.CreateMessageWindow(messageText, action);
     }
-
     public void OpenWindow(Type windowType)
     {
         if (Windows.ContainsKey(windowType))
