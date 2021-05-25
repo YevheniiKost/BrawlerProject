@@ -16,7 +16,7 @@ public class MorkGroundCanvas : GroundCanvas
         {
             _firstSkillPointer.gameObject.SetActive(false);
         }
-
+        ChangePointersColor();
         TargetAimingSecondSkill(_secondSkillRadius);
     }
 }

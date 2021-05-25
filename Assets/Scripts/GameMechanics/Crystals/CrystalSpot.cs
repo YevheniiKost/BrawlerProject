@@ -98,7 +98,7 @@ public class CrystalSpot : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.TryGetComponent(out CharacterIdentifier player) && _currentCrystal != null)
+        if(other.TryGetComponent(out CharacterIdentifier player) && IsCrystalOn)
         {
             if (player.Team == 0)
             {
@@ -148,9 +148,9 @@ public class CrystalSpot : MonoBehaviour
             _blueParticles.Play();
     }
 
-    private IEnumerator WaitAndSpawnCrystal(float coolDown)
+    private IEnumerator WaitAndSpawnCrystal(float cooldown)
     {
-        yield return new WaitForSeconds(coolDown);
+        yield return new WaitForSeconds(cooldown);
         SpawnCrystal();
     }
 

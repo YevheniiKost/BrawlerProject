@@ -207,6 +207,49 @@ public class MapHelper : MonoBehaviour
         }
     }
 
+    public List<Transform> LocateAFewActiveEnemyCrystals(CharacterIdentifier me)
+    {
+        List<Transform> list = new List<Transform>();
+        if (me.Team == 0)
+        {
+            for (int i = 0; i < BlueCrystalsList.Count; i++)
+            {
+                if (BlueCrystalsList[i].IsCrystalOn)
+                {
+                    list.Add(BlueCrystalsList[i].transform);
+                }
+                else
+                    continue;
+            }
+            if (list.Count > 0)
+                return list;
+            else
+                return null;
+
+        }
+        else if (me.Team == 1)
+        {
+            for (int i = 0; i < BlueCrystalsList.Count; i++)
+            {
+                if (RedCrystalsList[i].IsCrystalOn)
+                {
+                    list.Add(BlueCrystalsList[i].transform);
+                }
+                else
+                    continue;
+            }
+            if (list.Count > 0)
+                return list;
+            else
+                return null;
+        }
+        else
+        {
+            Debug.LogError($"Character {me.name} identifier error");
+            return null;
+        }
+    }
+
     public Transform LocateNearestActiveFriendlyCrystal(CharacterIdentifier me)
     {
         int searchIndex = 0;

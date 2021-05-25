@@ -88,8 +88,7 @@ public class JiseleCombat : CharacterCombat
             FirstAbilityUsedEvent(_fireballCooldown);
             
             _firstAbilityCooldownTimer = _fireballCooldown;
-            GetComponent<CharacterMovement>()?.ProcessForcedStop();
-           
+            _character.CharMovement.ProcessForcedStop();
         }
     }
 
@@ -115,13 +114,12 @@ public class JiseleCombat : CharacterCombat
             }
             OnSecondSkillUse();
             _secondSkillCastParticles.Play();
-            ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Jisele03Use);
-            SecondAvilityUsedEvent(_secondAbilityCooldown);
+           _audioManager.PlaySFX(SoundsFx.Jisele03Use);
+            SecondAbilityUsedEvent(_secondAbilityCooldown);
             _secondAbilityCooldownTimer = _secondAbilityCooldown;
-            GetComponent<CharacterMovement>()?.ProcessForcedStop();
+            _character.CharMovement.ProcessForcedStop();
         }
     }
-
     #endregion
 
     private void Awake()
@@ -169,7 +167,7 @@ public class JiseleCombat : CharacterCombat
         }
     }
 
-
+    #region Skills hit
     private void AutoAttackHit()
     {
       if(_target != null)
@@ -178,38 +176,39 @@ public class JiseleCombat : CharacterCombat
 
             _autoattackDirection = _target.transform.position - ball.transform.position;
             _autoattackDirection.y = 0;
-            ball.SetData(_autoattackDirection.normalized, _autoAttackDamage, _charID, _autoattackFlySpeed, _autoattackFlyDistance);
+            ball.SetData(_autoattackDirection.normalized, _autoAttackDamage, _character.CharID, _autoattackFlySpeed, _autoattackFlyDistance);
         }
     }
 
     private void FirstSkillHit()
     {
         var fireBall = Instantiate(_fireballPrefab, _fireballStartPoint.position, Quaternion.identity);
-        ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Jisele02Use);
-        fireBall.SetData(_fireaballDamage, _fireballSpeed, _fireballFlyDistance, _firstSkillDirection, _charID);
+        _audioManager.PlaySFX(SoundsFx.Jisele02Use);
+        fireBall.SetData(_fireaballDamage, _fireballSpeed, _fireballFlyDistance, _firstSkillDirection, _character.CharID);
         _firstSkillDirection = Vector3.zero;
-        GetComponent<CharacterMovement>()?.UndoForcedStop();
+        _character.CharMovement.UndoForcedStop();
     }
 
     private void SecondSkillHit()
     {
         var meteor = Instantiate(_meteorPrefab, transform.position + _secondSkillDirection, Quaternion.identity);
-        meteor.GetData(_meteorExplosionDamage, _fireAreaDamage, _meteorExplosionRadius, _fireAreaDamageRate, _fireAreaDamageRate, _fireAreaLifeTime, _charID);
+        meteor.GetData(_meteorExplosionDamage, _fireAreaDamage, _meteorExplosionRadius, _fireAreaDamageRate, _fireAreaDamageRate, _fireAreaLifeTime, _character.CharID);
         _secondSkillDirection = Vector3.zero;
         
-        GetComponent<CharacterMovement>()?.UndoForcedStop();
+       _character.CharMovement.UndoForcedStop();
     }
+    #endregion
 
     #region Skills player input
     private void AutoAttackHandler(object arg1, AutoattackEvent arg2)
     {
-        if (_charID.IsControlledByThePlayer)
+        if (_character.CharID.IsControlledByThePlayer)
             AutoAttack();
     }
 
     private void FirstSkillInputHandler(object arg1, FirstSkillEvent skill)
     {
-        if (_charID.IsControlledByThePlayer)
+        if (_character.CharID.IsControlledByThePlayer)
         {
             _firstSkillDirection = new Vector3(skill.Direction.x, 0, skill.Direction.y);
             UseFirstSkill();
@@ -218,7 +217,7 @@ public class JiseleCombat : CharacterCombat
 
     private void SecondSkillInputHandler(object arg1, SecondSkillEvent skill)
     {
-        if (_charID.IsControlledByThePlayer)
+        if (_character.CharID.IsControlledByThePlayer)
         {
             _secondSkillDirection = skill.Direction;
             UseSecondSkill();

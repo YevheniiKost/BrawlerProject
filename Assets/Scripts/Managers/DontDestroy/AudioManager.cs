@@ -85,11 +85,13 @@ public class AudioManager : MonoBehaviour
             Instance = this;
             ServiceLocator.Register(this);
         }
-        
+
+        GetParametersFromPlayerPrefs();
+
     }
 
 
-    private void Start()
+    private void GetParametersFromPlayerPrefs()
     {
         _musicVolume = PlayerPrefs.GetFloat(_musicVolumeKey);
         if (_musicVolume == 0)
@@ -105,7 +107,7 @@ public class AudioManager : MonoBehaviour
         _musicSource.mute = !_isMusicOn;
         _soundFxSource.mute = !_isSoundsOn;
     }
-   
+
     private AudioClip GetSoundFXClip(SoundsFx soundsFx)
     {
         var soundData = _soundsFXList.Find(sfxData => sfxData.SoundFx == soundsFx);

@@ -114,11 +114,12 @@ public class GamePlayManager : MonoBehaviour
         yield return new WaitForSeconds(characterDeathTimer);
         if (character.GetComponent<CharacterIdentifier>().Team == 0)
         {
-            character.transform.position = RedSpawnPoints[0].position;
+             character.transform.SetPositionAndRotation(RedSpawnPoints[0].position, Quaternion.identity);
         } else if (character.GetComponent<CharacterIdentifier>().Team == 1)
         {
-            character.transform.position = BlueSpawnPoints[0].position;
+             character.transform.SetPositionAndRotation(BlueSpawnPoints[0].position, Quaternion.identity);
         }
+      
         character.RenewCharacter();
     }
 

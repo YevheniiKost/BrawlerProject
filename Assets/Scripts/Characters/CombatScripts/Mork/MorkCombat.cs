@@ -5,6 +5,8 @@ using UnityEngine.AI;
 
 public class MorkCombat : CharacterCombat
 {
+    private const float _smallValue = .02f;
+
     [Header("EarthQuake")]
     [SerializeField] private int _firstSkillDamage;
     [SerializeField] private float _firstSkillRadius;
@@ -23,9 +25,9 @@ public class MorkCombat : CharacterCombat
     [SerializeField] private float _jumpHeight;
     [SerializeField] private Transform _secondSkillParticles;
 
+    private Vector3 _secondSkillDirection = Vector3.zero;
 
-    private NavMeshAgent _navMeshAgent;
-    Vector3 _secondSkillDirection = Vector3.zero;
+ 
 
     public override void AttackBehavior()
     {
@@ -55,7 +57,7 @@ public class MorkCombat : CharacterCombat
             {
                 transform.LookAt(_target);
                 OnAutoAttack();
-                ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Mork01Hit);
+                _audioManager.PlaySFX(SoundsFx.Mork01Hit);
                 _timeToNextAttack = 0;
             }
         }
@@ -92,11 +94,11 @@ public class MorkCombat : CharacterCombat
                 _secondSkillDirection = transform.position + (direction * _secondSkillJumpDistance);
             }
             transform.LookAt(_secondSkillDirection);
-            StartCoroutine(MorkJump(_secondSkillDirection, _secondSkillJumpTime));
+            StartCoroutine(MorkJump(SecondSkillDirection(_secondSkillDirection), _secondSkillJumpTime));
             OnSecondSkillUse();
-            SecondAvilityUsedEvent(_secondSkillCooldown);
+            SecondAbilityUsedEvent(_secondSkillCooldown);
             _secondAbilityCooldownTimer = _secondSkillCooldown;
-            GetComponent<CharacterMovement>()?.ProcessForcedStop();
+            _character.CharMovement.ProcessForcedStop();
         }
     }
 
@@ -108,11 +110,10 @@ public class MorkCombat : CharacterCombat
         Vector3 p4 = new Vector3(secondSkillDirection.x, 0, secondSkillDirection.z);
 
         float tParam = 0;
-       //int points = 100;
-        _navMeshAgent.enabled = false;
+
+        _character.NavMeshAgent.enabled = false;
         while (tParam <= 1)
         {
-
             tParam += Time.deltaTime * _secondSkillJumpTime;
 
             Vector3 newPos = Mathf.Pow(1 - tParam, 3) * p1 +
@@ -123,12 +124,12 @@ public class MorkCombat : CharacterCombat
             transform.position = newPos;
             yield return new WaitForEndOfFrame();
         }
-        if (_charID.IsControlledByThePlayer)
+        if (_character.CharID.IsControlledByThePlayer)
             EventAggregator.Post(this, new ShakeCamera { Intencity = 5, Time = .5f });
         transform.position = secondSkillDirection;
         Instantiate(_secondSkillParticles, transform.position + Vector3.up * .02f, Quaternion.identity);
-        ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Mork03Hit);
-        _navMeshAgent.enabled = true;
+        _audioManager.PlaySFX(SoundsFx.Mork03Hit);
+        _character.NavMeshAgent.enabled = true;
     }
     #endregion
 
@@ -141,8 +142,6 @@ public class MorkCombat : CharacterCombat
         EventAggregator.Subscribe<AutoattackEvent>(AutoAttackHandler);
         EventAggregator.Subscribe<FirstSkillEvent>(FirstSkillInputHandler);
         EventAggregator.Subscribe<SecondSkillEvent>(SecondSkillInputHandler);
-
-        _navMeshAgent = GetComponent<NavMeshAgent>();
     }
 
     private void Update()
@@ -184,33 +183,28 @@ public class MorkCombat : CharacterCombat
     {
         if (Target.TryGetComponent(out CharacterHealth enemy))
         {
-            enemy.ModifyHealth(-_autoAttackDamage, _charID);
+            enemy.ModifyHealth(-_autoAttackDamage, _character.CharID);
             _timeToNextAttack = 0;
         }
     }
 
     private void FirstSkillHit()
     {
-        Instantiate(_firstSkillParticles, transform.position + Vector3.up * .02f, Quaternion.identity);
-        ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Mork02Hit);
+        Instantiate(_firstSkillParticles, transform.position + Vector3.up * _smallValue, Quaternion.identity);
+        _audioManager.PlaySFX(SoundsFx.Mork02Hit);
 
         var contacts = Physics.OverlapSphere(transform.position, _firstSkillRadius);
         for (int i = 0; i < contacts.Length; i++)
         {
             if(contacts[i].TryGetComponent(out CharacterIdentifier character))
             {
-                if(character.Team != _charID.Team)
+                if(character.Team != _character.CharID.Team)
                 {
-                    character.GetComponent<CharacterHealth>().ModifyHealth(-_firstSkillDamage, _charID);
-                    ServiceLocator.Resolve<CharacterEffectsManager>().SnareEffect(character, _firstSkillSlowdownEffect, _firstSkillSlowdownDuration);
+                    character.GetComponent<CharacterHealth>().ModifyHealth(-_firstSkillDamage, _character.CharID);
+                    _effectsManager.SnareEffect(character, _firstSkillSlowdownEffect, _firstSkillSlowdownDuration);
                 }
             }
         }
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(transform.position, _firstSkillRadius);
     }
 
     private void SecondSkillHit()
@@ -220,15 +214,15 @@ public class MorkCombat : CharacterCombat
         {
             if (contacts[i].TryGetComponent(out CharacterIdentifier character))
             {
-                if (character.Team != _charID.Team)
+                if (character.Team != _character.CharID.Team)
                 {
-                    character.GetComponent<CharacterHealth>().ModifyHealth(-_secondSkillDamage, _charID);
-                    ServiceLocator.Resolve<CharacterEffectsManager>().StunEffect(character, _secondSkillStunDuration);
+                    character.GetComponent<CharacterHealth>().ModifyHealth(-_secondSkillDamage, _character.CharID);
+                    _effectsManager.StunEffect(character, _secondSkillStunDuration);
                 }
             }
         }
         _secondSkillDirection = Vector3.zero;
-        GetComponent<CharacterMovement>()?.UndoForcedStop();
+        _character.CharMovement.UndoForcedStop();
     }
 
     #endregion
@@ -236,13 +230,13 @@ public class MorkCombat : CharacterCombat
     #region Player input handler
     private void AutoAttackHandler(object arg1, AutoattackEvent arg2)
     {
-        if (_charID.IsControlledByThePlayer)
+        if (_character.CharID.IsControlledByThePlayer)
             AutoAttack();
     }
 
     private void FirstSkillInputHandler(object arg1, FirstSkillEvent skill)
     {
-        if (_charID.IsControlledByThePlayer)
+        if (_character.CharID.IsControlledByThePlayer)
         {
             UseFirstSkill();
         }
@@ -250,7 +244,7 @@ public class MorkCombat : CharacterCombat
 
     private void SecondSkillInputHandler(object arg1, SecondSkillEvent skill)
     {
-        if (_charID.IsControlledByThePlayer)
+        if (_character.CharID.IsControlledByThePlayer)
         {
             _secondSkillDirection = skill.Direction;
             UseSecondSkill();
@@ -259,4 +253,21 @@ public class MorkCombat : CharacterCombat
     }
 
     #endregion
+
+    private Vector3 SecondSkillDirection(Vector3 secondSkillDirection)
+    {
+        if (secondSkillDirection.x > 19.5f)
+            secondSkillDirection.x = 19.5f;
+
+        if (secondSkillDirection.x < -19.5f)
+            secondSkillDirection.x = -19.5f;
+
+        if (secondSkillDirection.z > 29.5f)
+            secondSkillDirection.z = 29.5f;
+
+        if (secondSkillDirection.z < -29.5f)
+            secondSkillDirection.z = -29.5f;
+
+        return secondSkillDirection;
+    }
 }

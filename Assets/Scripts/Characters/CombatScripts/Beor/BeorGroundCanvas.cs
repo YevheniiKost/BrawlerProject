@@ -7,6 +7,7 @@ public class BeorGroundCanvas : GroundCanvas
     
     void Update()
     {
+        ChangePointersColor();
         ForwardAimingFirstSkill();
         ForwardAimingSecondSkill();
         AutoattackCircle();

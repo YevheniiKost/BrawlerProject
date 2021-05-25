@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent (typeof(NavMeshAgent)), RequireComponent (typeof(CharacterPlayerInput)), RequireComponent (typeof(CharacterIdentifier))]
+[RequireComponent (typeof(Character))]
 public class CharacterMovement : MonoBehaviour, IStunComponent
 {
     [Header("Movenet stats")]
@@ -22,12 +22,10 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
     private float _currentMovementSpeed;
 
     private bool _isMoving;
-    private NavMeshAgent _navMeshAgent;
-    private CharacterPlayerInput _input;
-    private CharacterIdentifier _iD;
+    private Character _character;
 
     #region Stun
-    public bool GetIsStunned() => ForcedStop;
+    public bool IsStunned => ForcedStop;
 
     public void SetIsStunned(bool value)
     {
@@ -38,23 +36,23 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
 
     public void ModifyMovementSpeed(float percent)
     {
-        if (_navMeshAgent.enabled)
+        if (_character.NavMeshAgent.enabled)
         {
             if (percent > 0)
                 _slowDownParticles.gameObject.SetActive(true);
 
             _currentMovementSpeed = _initialMovementSpeed - percent * _initialMovementSpeed / 100;
-            _navMeshAgent.speed = _currentMovementSpeed;
+            _character.NavMeshAgent.speed = _currentMovementSpeed;
             RecalculateNormalizedSpeed();
         }
     }
 
     public void ReturnNormalSpeed()
     {
-        if (_navMeshAgent.enabled)
+        if (_character.NavMeshAgent.enabled)
         {
             _slowDownParticles.gameObject.SetActive(false);
-            _navMeshAgent.speed = _initialMovementSpeed;
+            _character.NavMeshAgent.speed = _initialMovementSpeed;
             _currentMovementSpeed = _initialMovementSpeed;
             RecalculateNormalizedSpeed();
         }
@@ -63,14 +61,14 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
     #region AI movement
     public void SetTarget(Transform target)
     {
-        if (_navMeshAgent.enabled)
+        if (_character.NavMeshAgent.enabled)
         {
             if (!ForcedStop && target != null)
             {
-                _navMeshAgent.isStopped = false;
-                _navMeshAgent.destination = target.position;
+                _character.NavMeshAgent.isStopped = false;
+                _character.NavMeshAgent.destination = target.position;
 
-                _currentMovementSpeed = _navMeshAgent.speed;
+                _currentMovementSpeed = _character.NavMeshAgent.speed;
                 RecalculateNormalizedSpeed();
             }
             else
@@ -82,12 +80,12 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
 
     public void StopMovement()
     {
-        if (_navMeshAgent.enabled)
+        if (_character.NavMeshAgent.enabled)
         {
-            _navMeshAgent.destination = transform.position;
-            _navMeshAgent.isStopped = true;
+            _character.NavMeshAgent.destination = transform.position;
+            _character.NavMeshAgent.isStopped = true;
 
-            _currentMovementSpeed = _navMeshAgent.speed;
+            _currentMovementSpeed = _character.NavMeshAgent.speed;
             RecalculateNormalizedSpeed();
         }
     }
@@ -99,62 +97,49 @@ public class CharacterMovement : MonoBehaviour, IStunComponent
 
     private void Awake()
     {
-        SetDependencies();
+        _character = GetComponent<Character>();
     }
    
     private void Start()
     {
-        _navMeshAgent.speed = _initialMovementSpeed;
+        _character.NavMeshAgent.speed = _initialMovementSpeed;
         RecalculateNormalizedSpeed();
     }
 
     private void Update()
     {
-        if (_iD.IsControlledByThePlayer && !ForcedStop && GetComponent<CharacterHealth>()?.GetLifeStatus() != LifeStatus.Dead)
+        if (_character.CharID.IsControlledByThePlayer && !ForcedStop && GetComponent<CharacterHealth>()?.GetLifeStatus() != LifeStatus.Dead)
             ProcessPlayerMovement();
-        else
-            ProcessAIMovemet();
 
-        if (_navMeshAgent.enabled)
-            _isMoving = !_navMeshAgent.isStopped;
-    }
 
-    private void SetDependencies()
-    {
-        _navMeshAgent = GetComponent<NavMeshAgent>();
-        _iD = GetComponent<CharacterIdentifier>();
-        _input = GetComponent<CharacterPlayerInput>();
+        if (_character.NavMeshAgent.enabled)
+            _isMoving = !_character.NavMeshAgent.isStopped;
     }
 
     private void ProcessPlayerMovement()
     {
-        if (_navMeshAgent.enabled)
+        if (_character.NavMeshAgent.enabled)
         {
-            if (_input.MovementDirection != Vector3.zero)
+            if (_character.CharInput.MovementDirection != Vector3.zero)
             {
-                _navMeshAgent.isStopped = false;
+                _character.NavMeshAgent.isStopped = false;
 
-                var newSpherePosition = transform.position + _input.MovementDirection;
+                var newSpherePosition = transform.position + _character.CharInput.MovementDirection;
                 _targetSphere.position = new Vector3(newSpherePosition.x, 0, newSpherePosition.z);
 
                 if (!_targetSphere.GetComponent<TargetSphere>().IsInObstacle)
-                    _navMeshAgent.destination = _targetSphere.position;
+                    _character.NavMeshAgent.destination = _targetSphere.position;
             }
             else
             {
-                _navMeshAgent.destination = transform.position;
-                _navMeshAgent.isStopped = true;
+                _character.NavMeshAgent.destination = transform.position;
+                _character.NavMeshAgent.isStopped = true;
                 _targetSphere.position = new Vector3(transform.position.x, 0, transform.position.z);
             }
 
-            _currentMovementSpeed = _navMeshAgent.speed;
+            _currentMovementSpeed = _character.NavMeshAgent.speed;
             RecalculateNormalizedSpeed();
         } 
-    }
-
-    private void ProcessAIMovemet()
-    {
-
     }
 
     private void RecalculateNormalizedSpeed()

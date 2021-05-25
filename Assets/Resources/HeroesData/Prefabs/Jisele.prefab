@@ -759,6 +759,7 @@ GameObject:
   - component: {fileID: 7444136698098919060}
   - component: {fileID: 7444136698098919065}
   - component: {fileID: 7444136698098919061}
+  - component: {fileID: 2713018110385448696}
   - component: {fileID: 7444136698098919057}
   - component: {fileID: 7444136698098919063}
   - component: {fileID: 7444136698098919056}
@@ -829,6 +830,24 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 0
+--- !u!114 &2713018110385448696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7444136698098919064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0dca239f4f3e9342b12ac7423e0f529, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _characterIdentifier: {fileID: 7444136698098919057}
+  _characterMovement: {fileID: 7444136698098919063}
+  _characterHealth: {fileID: 7444136698098919056}
+  _characterInput: {fileID: 7444136698098919062}
+  _characteAnimation: {fileID: 7444136698098919058}
+  _characterCombat: {fileID: 6866329213732930493}
 --- !u!114 &7444136698098919057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -916,7 +935,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animEventHandler: {fileID: 3367600637055144823}
-  _charID: {fileID: 7444136698098919057}
   _autoAttackDamage: 30
   _autoAttackRange: 8
   _autoAttackRate: 1.5

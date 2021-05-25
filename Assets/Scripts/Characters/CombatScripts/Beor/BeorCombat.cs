@@ -77,7 +77,7 @@ public class BeorCombat : CharacterCombat
             }
             OnFirstSkillUse();
             FirstAbilityUsedEvent(_shieldBashCooldown);
-            ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Beor02Use);
+            _audioManager.PlaySFX(SoundsFx.Beor02Use);
             _shieldBashCollider.gameObject.SetActive(true);
             _firstAbilityCooldownTimer = _shieldBashCooldown;
         }
@@ -103,13 +103,12 @@ public class BeorCombat : CharacterCombat
 
             transform.localRotation = Quaternion.Euler(0, Mathf.Atan2(_secondSkillDirection.x, _secondSkillDirection.y) * Mathf.Rad2Deg, 0);
             OnSecondSkillUse();
-            SecondAvilityUsedEvent(_shieldThrowCooldown);
+            SecondAbilityUsedEvent(_shieldThrowCooldown);
             
-            GetComponent<CharacterMovement>()?.ProcessForcedStop();
+           _character.CharMovement.ProcessForcedStop();
             _secondAbilityCooldownTimer = _shieldThrowCooldown;
         }
     }
-
     #endregion
 
 
@@ -163,9 +162,9 @@ public class BeorCombat : CharacterCombat
     {
         if (Target.TryGetComponent(out CharacterHealth enemy))
         {
-            enemy.ModifyHealth(-_autoAttackDamage, _charID);
+            enemy.ModifyHealth(-_autoAttackDamage, _character.CharID);
             Instantiate(_autoAttackHitParticles, enemy.transform.position, Quaternion.identity);
-            ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Beor01Hit);
+            _audioManager.PlaySFX(SoundsFx.Beor01Hit);
             _timeToNextAttack = 0;
         }
     }
@@ -173,8 +172,6 @@ public class BeorCombat : CharacterCombat
     private void FirstSkillHit()
     {
         var contacts = new List<CharacterIdentifier>(_shieldBashCollider.GetContacts());
-        
-
         if (contacts.Count == 0)
         {
             return;
@@ -182,14 +179,14 @@ public class BeorCombat : CharacterCombat
 
         foreach (var contact in contacts)
         {
-            if(contact.Team == this.GetComponent<CharacterIdentifier>().Team)
+            if(contact.Team == _character.CharID.Team)
             {
                 continue;
             }
             else
             {
-                ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Beor02Hit);
-                contact.GetComponent<CharacterHealth>().ModifyHealth(-_shieldBashDamage, _charID);
+                _audioManager.PlaySFX(SoundsFx.Beor02Hit);
+                contact.GetComponent<CharacterHealth>().ModifyHealth(-_shieldBashDamage, _character.CharID);
                 _effectsManager.SnareEffect(contact, _shieldBashSlowingFactor, _shieldBashSlowingDuaration);
                 Instantiate(_shieldBashHitParticles, contact.transform.position, Quaternion.identity);
             }
@@ -201,23 +198,22 @@ public class BeorCombat : CharacterCombat
    private void SecondSkillHit()
     {
         var shield = Instantiate(_shieldPrefab, _shieldStartPoint.position + Vector3.down * .5f, Quaternion.identity);
-        ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.Beor03Use);
-        shield.GetData(_shieldThrowDamage, _shieldThrowSpeed, _shieldThrowDistance, new Vector3(_secondSkillDirection.x, 0, _secondSkillDirection.y).normalized, _charID, _shieldThrowStunDuration);
-        GetComponent<CharacterMovement>()?.UndoForcedStop();
+        _audioManager.PlaySFX(SoundsFx.Beor03Use);
+        shield.GetData(_shieldThrowDamage, _shieldThrowSpeed, _shieldThrowDistance, new Vector3(_secondSkillDirection.x, 0, _secondSkillDirection.y).normalized, _character.CharID, _shieldThrowStunDuration);
+       _character.CharMovement.UndoForcedStop();
     }
-
     #endregion
 
     #region Player input handler
     private void AutoAttackHandler(object arg1, AutoattackEvent arg2)
     {
-        if (_charID.IsControlledByThePlayer)
+        if (_character.CharID.IsControlledByThePlayer)
             AutoAttack();
     }
 
     private void FirstSkillInputHandler(object arg1, FirstSkillEvent skill)
     {
-        if (_charID.IsControlledByThePlayer)
+        if (_character.CharID.IsControlledByThePlayer)
         {
             _firstSkillDirection = skill.Direction;
             UseFirstSkill();
@@ -226,13 +222,11 @@ public class BeorCombat : CharacterCombat
 
     private void SecondSkillInputHandler(object arg1, SecondSkillEvent skill)
     {
-        if (_charID.IsControlledByThePlayer)
+        if (_character.CharID.IsControlledByThePlayer)
         {
             _secondSkillDirection = skill.Direction;
             UseSecondSkill();
         }
-
     }
-
     #endregion
 }

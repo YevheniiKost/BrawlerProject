@@ -101,7 +101,7 @@ public class GroundCanvas : MonoBehaviour
     }
 
 
-    protected void ChagePointersColor()
+    protected void ChangePointersColor()
     {
         if (CancleButton.IsCancle)
         {

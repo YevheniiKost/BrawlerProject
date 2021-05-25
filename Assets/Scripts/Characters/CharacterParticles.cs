@@ -7,10 +7,7 @@ public class CharacterParticles : MonoBehaviour, IStunComponent
     [SerializeField] private ParticleSystem _stunParticles;
 
     private bool _isStunned;
-    public bool GetIsStunned()
-    {
-        return _isStunned;
-    }
+    public bool IsStunned => _isStunned;
 
     public void SetIsStunned(bool value)
     {

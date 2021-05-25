@@ -6,7 +6,7 @@ using System.Collections;
 
 public delegate void CombatEvent();
 
-[RequireComponent(typeof(CharacterIdentifier))]
+[RequireComponent(typeof(Character))]
 public abstract class CharacterCombat : MonoBehaviour, IStunComponent
 {
     public event CombatEvent AutoAttackWasUsed;
@@ -17,7 +17,7 @@ public abstract class CharacterCombat : MonoBehaviour, IStunComponent
     public const float DetectEnemyUpdateTime = 0.2f; 
 
     [SerializeField] protected AnimationEventHandler _animEventHandler;
-    [SerializeField] protected CharacterIdentifier _charID;
+    
 
     [Header("Autoattacks")]
     [SerializeField] protected int _autoAttackDamage;
@@ -28,16 +28,8 @@ public abstract class CharacterCombat : MonoBehaviour, IStunComponent
     public Transform Target => _target;
 
     #region stun
-    public bool GetIsStunned()
-    {
-        return _isStunned;
-    }
-
-    public void SetIsStunned(bool value)
-    {
-        _isStunned = value;
-    }
-
+    public bool IsStunned => _isStunned;
+    public void SetIsStunned(bool value) => _isStunned = value;
     #endregion
 
     public float EnemyDetectRadius = 10f;
@@ -48,12 +40,13 @@ public abstract class CharacterCombat : MonoBehaviour, IStunComponent
     protected float _timeToNextAttack = 0;
     protected Transform _target;
     protected CharacterEffectsManager _effectsManager;
+    protected AudioManager _audioManager;
+    protected Character _character;
 
     protected float _firstAbilityCooldownTimer;
     protected float _secondAbilityCooldownTimer;
 
     private MapHelper _mapHelper;
-   
 
     public abstract void AutoAttack();
     public abstract void UseFirstSkill();
@@ -63,17 +56,19 @@ public abstract class CharacterCombat : MonoBehaviour, IStunComponent
     public virtual void OnFirstSkillUse() => FirstSkillWasUsed?.Invoke();
     public virtual void OnSecondSkillUse() => SecondSkillWasUsed?.Invoke();
 
- 
+
     private void Start()
     {
+        _character = GetComponent<Character>();
         _mapHelper = ServiceLocator.Resolve<MapHelper>();
         _effectsManager = ServiceLocator.Resolve<CharacterEffectsManager>();
+        _audioManager = ServiceLocator.Resolve<AudioManager>();
 
         StartCoroutine(StartEnemySearchCycle());
     }
     protected IEnumerator StartEnemySearchCycle()
     {
-        while (true)
+        while (true) 
         {
             yield return new WaitForSeconds(DetectEnemyUpdateTime);
             DetectEnemy();
@@ -81,24 +76,24 @@ public abstract class CharacterCombat : MonoBehaviour, IStunComponent
     }
     private void DetectEnemy()
     {
-        if (_mapHelper.GetNearestEnemy(_charID) == null)
+        if (_mapHelper.GetNearestEnemy(_character.CharID) == null)
         {
             IsEnemyDetected = false;
             _target = null;
         }
         else
         {
-            if (_mapHelper.DistanceToNearestEnemy(_charID) <= EnemyDetectRadius)
+            if (_mapHelper.DistanceToNearestEnemy(_character.CharID) <= EnemyDetectRadius)
             {
                 IsEnemyDetected = true;
 
-                if (Target == _mapHelper.GetNearestEnemy(_charID).transform)
+                if (Target == _mapHelper.GetNearestEnemy(_character.CharID).transform)
                 {
                     return;
                 }
                 else
                 {
-                    _target = _mapHelper.GetNearestEnemy(_charID).transform;
+                    _target = _mapHelper.GetNearestEnemy(_character.CharID).transform;
                 }
             }
             else
@@ -110,18 +105,19 @@ public abstract class CharacterCombat : MonoBehaviour, IStunComponent
     }
     protected void FirstAbilityUsedEvent(float CD)
     {
-        if (_charID.IsControlledByThePlayer)
+        if (_character.CharID.IsControlledByThePlayer)
             EventAggregator.Post(this, new FirstAbilityWasUsed { Cooldown = CD });
     }
-    protected void SecondAvilityUsedEvent(float CD)
+    protected void SecondAbilityUsedEvent(float CD)
     {
-        if(_charID.IsControlledByThePlayer)
+        if(_character.CharID.IsControlledByThePlayer)
             EventAggregator.Post(this, new SecondAbilityWasUsed { Cooldown = CD });
     }
 }
 
 public interface IStunComponent 
 {
-    bool GetIsStunned();
+    bool IsStunned { get; }
+
     void SetIsStunned(bool value);
 }

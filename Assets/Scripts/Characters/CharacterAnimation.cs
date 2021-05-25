@@ -4,14 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent)), RequireComponent(typeof(CharacterMovement)), RequireComponent(typeof(CharacterHealth))]
+[RequireComponent(typeof(NavMeshAgent)), RequireComponent(typeof(Character))]
 public class CharacterAnimation : MonoBehaviour, IStunComponent
 {
     [SerializeField] private Animator _animator;
 
-    private CharacterMovement _movement;
-    private CharacterHealth _health;
-    private NavMeshAgent _navMeshAgent;
+    private Character _character;
 
     private int _characterLocomotionParamID;
     private int _characterAutoattackParamID;
@@ -24,23 +22,13 @@ public class CharacterAnimation : MonoBehaviour, IStunComponent
     private bool _isStunned;
 
     #region stun
-    public bool GetIsStunned()
-    {
-        return _isStunned;
-    }
-
-    public void SetIsStunned(bool value)
-    {
-        SetStunnedAnimation(value);
-    }
-
+    public bool IsStunned => _isStunned;
+    public void SetIsStunned(bool value) => SetStunnedAnimation(value);
     #endregion
 
     private void Awake()
     {
-        _navMeshAgent = GetComponent<NavMeshAgent>();
-        _movement = GetComponent<CharacterMovement>();
-        _health = GetComponent<CharacterHealth>();
+        _character = GetComponent<Character>();
 
         _characterLocomotionParamID = Animator.StringToHash("MovementSpeed");
         _characterAutoattackParamID = Animator.StringToHash("Autoattack");
@@ -50,21 +38,20 @@ public class CharacterAnimation : MonoBehaviour, IStunComponent
         _characterWakeUpParamID = Animator.StringToHash("WakeUp");
         _characterStunParamID = Animator.StringToHash("IsStunned");
 
-        GetComponent<CharacterCombat>().AutoAttackWasUsed += UseAutoattack;
-        GetComponent<CharacterCombat>().FirstSkillWasUsed += UseFirstSkill;
-        GetComponent<CharacterCombat>().SecondSkillWasUsed += UseSecondSkill;
+        _character.CharCombat.AutoAttackWasUsed += UseAutoattack;
+        _character.CharCombat.FirstSkillWasUsed += UseFirstSkill;
+        _character.CharCombat.SecondSkillWasUsed += UseSecondSkill;
 
         EventAggregator.Subscribe<CharacterDeath>(OnCharacterDeathHandler);
         EventAggregator.Subscribe<CharacterWakeUp>(OnCharacterWakeUpHandler);
-
     }
 
 
     private void OnDestroy()
     {
-        GetComponent<CharacterCombat>().AutoAttackWasUsed -= UseAutoattack;
-        GetComponent<CharacterCombat>().FirstSkillWasUsed -= UseFirstSkill;
-        GetComponent<CharacterCombat>().SecondSkillWasUsed -= UseSecondSkill;
+        _character.CharCombat.AutoAttackWasUsed -= UseAutoattack;
+        _character.CharCombat.FirstSkillWasUsed -= UseFirstSkill;
+        _character.CharCombat.SecondSkillWasUsed -= UseSecondSkill;
 
         EventAggregator.Unsubscribe<CharacterDeath>(OnCharacterDeathHandler);
         EventAggregator.Unsubscribe<CharacterWakeUp>(OnCharacterWakeUpHandler);
@@ -72,10 +59,10 @@ public class CharacterAnimation : MonoBehaviour, IStunComponent
 
     private void Update()
     {
-        if (_navMeshAgent.enabled)
+        if (_character.NavMeshAgent.enabled)
         {
-            if (!_navMeshAgent.isStopped)
-                _animator.SetFloat(_characterLocomotionParamID, _movement.NormilizedSpeed);
+            if (!_character.NavMeshAgent.isStopped)
+                _animator.SetFloat(_characterLocomotionParamID, _character.CharMovement.NormilizedSpeed);
             else
                 _animator.SetFloat(_characterLocomotionParamID, 0);
         }
@@ -83,7 +70,7 @@ public class CharacterAnimation : MonoBehaviour, IStunComponent
 
     private void OnCharacterDeathHandler(object character, CharacterDeath death)
     {
-        if (death.Character == _health)
+        if (death.Character == _character.CharHealth)
         {
             CharacterDeath();
         }
@@ -91,7 +78,7 @@ public class CharacterAnimation : MonoBehaviour, IStunComponent
 
     private void OnCharacterWakeUpHandler(object arg1, CharacterWakeUp data)
     {
-        if(data.Character == _health)
+        if(data.Character == _character.CharHealth)
         {
             CharacterWakeUp();
         }

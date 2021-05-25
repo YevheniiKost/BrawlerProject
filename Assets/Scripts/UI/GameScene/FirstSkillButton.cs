@@ -13,6 +13,7 @@ public class FirstSkillButton : SkillButton, IPointerUpHandler, IPointerDownHand
         {
             EventAggregator.Post(this, new FirstSkillEvent() { Direction = _direction });
         }
+        Debug.Log(_direction);
         _inputManager.IsPlayerHoldingFirstSkillButton = false;
         _direction = Vector3.zero;
 

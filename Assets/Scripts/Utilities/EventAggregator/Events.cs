@@ -16,7 +16,6 @@ public class CharacterHit
     public int Amount;
     public CharacterIdentifier Hiter;
 }
-
 public class CharacterDeath
 {
     public CharacterHealth Character;

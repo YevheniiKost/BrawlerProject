@@ -12,6 +12,8 @@ public class SettingsWindow : MonoBehaviour,IWindow
     [SerializeField] private Slider _soundsVolumeSlider;
     [SerializeField] private Slider _musicVolumeSlider;
 
+    private AudioManager _audioManager;
+
     public void CloseWindow()
     {
         gameObject.SetActive(false);
@@ -31,39 +33,31 @@ public class SettingsWindow : MonoBehaviour,IWindow
         _musicVolumeSlider.onValueChanged.AddListener(MusicVolumeSliderHandler);
     }
 
+    private void Start()
+    {
+        _audioManager = ServiceLocator.Resolve<AudioManager>();
+
+        _soundOnToggle.isOn = _audioManager.IsSoundsOn;
+        _musicOnToggle.isOn = _audioManager.IsMusicOn;
+        _soundsVolumeSlider.value = _audioManager.SoundFXVolume;
+        _musicVolumeSlider.value = _audioManager.MusicVolume;
+
+        EventAggregator.Post(this, new SetWindow { Window = this });
+        CloseWindow();
+    }
+
     private void OnDestroy()
     {
         EventAggregator.Post(this, new RemoveWindow { Window = this });
     }
 
-    private void SoundToggleHandler(bool arg0)
-    {
-        ServiceLocator.Resolve<AudioManager>().SetSoundFX(arg0);
-    }
+    private void SoundToggleHandler(bool arg0) => _audioManager.SetSoundFX(arg0);
 
-    private void MusicToggleHandler(bool arg0)
-    {
-        ServiceLocator.Resolve<AudioManager>().SetMusic(arg0);
-    }
+    private void MusicToggleHandler(bool arg0) => _audioManager.SetMusic(arg0);
 
-    private void SoudVolumeSliderHandler(float arg0)
-    {
-        ServiceLocator.Resolve<AudioManager>().SetFXVolume(arg0);
-    }
+    private void SoudVolumeSliderHandler(float arg0) => _audioManager.SetFXVolume(arg0);
 
-    private void MusicVolumeSliderHandler(float arg0)
-    {
-        ServiceLocator.Resolve<AudioManager>().SetMusicVolume(arg0);
-    }
+    private void MusicVolumeSliderHandler(float arg0) => _audioManager.SetMusicVolume(arg0);
 
-    private void OnCloseButtonClickHandler()
-    {
-        CloseWindow();
-    }
-
-    private void Start()
-    {
-        EventAggregator.Post(this, new SetWindow { Window = this });
-        CloseWindow();
-    }
+    private void OnCloseButtonClickHandler() => CloseWindow();
 }

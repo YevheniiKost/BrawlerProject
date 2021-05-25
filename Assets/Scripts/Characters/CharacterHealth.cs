@@ -11,7 +11,7 @@ public enum LifeStatus
     Dead
 }
 
-[RequireComponent(typeof(CharacterIdentifier)), RequireComponent(typeof(CharacterHealth))]
+[RequireComponent(typeof(Character))]
 public class CharacterHealth : MonoBehaviour
 {
     public event Action<float> OnHealthPctChange = delegate { };
@@ -21,6 +21,8 @@ public class CharacterHealth : MonoBehaviour
     public float PercentOfHealthToStartRetreat = 30f;
 
     private float _currentHealh;
+    private Character _character;
+    private AudioManager _audioManager;
 
     public LifeStatus GetLifeStatus()
     {
@@ -67,6 +69,7 @@ public class CharacterHealth : MonoBehaviour
 
     public void RenewCharacter()
     {
+        transform.localPosition = Vector3.zero;
         _currentHealh += _initialHealh;
         EventAggregator.Post(this, new AddHealthBar { Character = this });
         EventAggregator.Post(this, new CharacterWakeUp { Character = this });
@@ -74,11 +77,13 @@ public class CharacterHealth : MonoBehaviour
 
     private void Awake()
     {
+        _character = GetComponent<Character>();
         _currentHealh = _initialHealh;
     }
 
     private void Start()
     {
+        _audioManager = ServiceLocator.Resolve<AudioManager>();
         EventAggregator.Post(this, new AddHealthBar { Character = this });
     }
 
@@ -86,14 +91,14 @@ public class CharacterHealth : MonoBehaviour
     {
         EventAggregator.Post(this, new CharacterDeath { Killer = killer, Character = this });
 
-        if (GetComponent<CharacterIdentifier>().Name == CharacterName.Beor)
-            ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.BeorDeath);
-        else if (GetComponent<CharacterIdentifier>().Name == CharacterName.Jisele)
-            ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.JiseleDeath);
-        else if (GetComponent<CharacterIdentifier>().Name == CharacterName.Mork)
-            ServiceLocator.Resolve<AudioManager>().PlaySFX(SoundsFx.MorkDeath);
+        if (_character.CharID.Name == CharacterName.Beor)
+            _audioManager.PlaySFX(SoundsFx.BeorDeath);
+        else if (_character.CharID.Name == CharacterName.Jisele)
+            _audioManager.PlaySFX(SoundsFx.JiseleDeath);
+        else if (_character.CharID.Name == CharacterName.Mork)
+            _audioManager.PlaySFX(SoundsFx.MorkDeath);
 
-        GetComponent<CharacterMovement>().StopMovement();
+        _character.CharMovement.StopMovement();
     }
 
     private float PercentOfHealth()
